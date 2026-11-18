@@ -1,4 +1,4 @@
-"""약한 모델의 예측 행선지 상위 4개 그림. 사용법: python plot_weak.py figures/  (v4 fold 0, 540개)"""
+"""오답이 많이 나왔던 모델의 예측 행선지 상위 4개 그림. 사용법: python plot_weak.py figures/  (v4 fold 0, 540개)"""
 import sys
 from pathlib import Path
 
@@ -48,7 +48,7 @@ for ax, name in zip(axes.flat, WEAK):
 for ax in axes.flat[len(WEAK):]:
     ax.axis("off")
 
-fig.suptitle("v4 · 약한 모델은 어디로 틀리나", x=0.01, y=0.995, ha="left", fontsize=12.5)
+fig.suptitle("v4 · 오답이 많이 나왔던 모델명 정리", x=0.01, y=0.995, ha="left", fontsize=12.5)
 fig.text(0.01, 0.955, f"fold 0 지문 540개 · recall 하위 {len(WEAK)}개 · 예측 비율 상위 4개 · 파란 막대 = 정답으로 예측 (= recall), 회색 = 다른 모델로 예측",
          ha="left", fontsize=9, color=MUTED)
 fig.tight_layout(rect=(0, 0, 1, 0.955))

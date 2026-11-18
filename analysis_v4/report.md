@@ -28,11 +28,11 @@ validation 점수는 fold 0을 학습에서 뺀 모델로 쟀고, 캐글 퍼블�
 
 점선은 기업 안에서 무작위로 고를 때의 값입니다.
 
-- Gemini는 네 버전 모두 기업을 1.000 맞히지만, 그 안에서는 0.56~0.63만 맞힙니다.
+- Gemini는 네 버전 모두 기업을 1.000 맞히지만, 그 안에서는 0.56\~0.63만 맞힙니다.
 - 모델이 여럿인 기업 중 기업 정확도가 가장 많이 오른 곳은 Claude입니다(0.687 → 0.807).
-- GLM은 기업 정확도가 0.48~0.60이고, 맞혀도 두 모델을 잘 구분하지 못합니다(찍을 때 0.5 대비 0.58~0.66).
+- GLM은 기업 정확도가 0.48\~0.60이고, 맞혀도 두 모델을 잘 구분하지 못합니다(찍을 때 0.5 대비 0.58\~0.66).
 - 모델이 하나뿐인 Qwen, Kimi는 기업 정확도가 곧 모델 recall입니다.
-- 오답 중 같은 기업의 다른 모델로 틀린 비율은 네 버전 모두 56~62%입니다.
+- 오답 중 같은 기업의 다른 모델로 틀린 비율은 네 버전 모두 56\~62%입니다.
 
 ## 기업 내부 혼동 행렬 (v4)
 
@@ -69,11 +69,11 @@ v4 validation(fold 0 지문 540개) 기준입니다. 행은 정답, 열은 예�
 - glm-5.3은 정답과 glm-5.3-flash로 가는 비율이 0.30으로 같습니다. glm-5.3-flash는 0.47로 조금 낫습니다.
 - 두 모델 모두 외부로 0.40(12개)이 새고, 그중 9개가 Claude 모델입니다(claude-fable-5 0.10씩, glm-5.3-flash → claude-sonnet-5 0.10).
 
-## 약한 모델은 어디로 틀리나 (v4)
+## 오답이 많이 나왔던 모델명 정리 (v4)
 
 v4 validation(fold 0 지문 540개)에서 recall이 낮은 8개 모델의 예측 비율 상위 4개입니다. 7위가 동점(0.467) 4개라 8개를 넣었습니다. 파란 막대가 정답으로 예측한 비율(recall)입니다.
 
-![v4 약한 모델의 예측 행선지](figures/weak_models_v4.png)
+![v4 오답이 많이 나왔던 모델의 예측 행선지](figures/weak_models_v4.png)
 
 - claude-fable-5는 정답(0.17)보다 glm-5.3-flash(0.30)와 claude-opus-4-8(0.20)로 더 많이 갑니다. glm-5.3과 glm-5.3-flash도 claude-fable-5로 0.10씩 갑니다. 기업이 달라도 하나의 묶음처럼 보입니다.
 - GPT 5.6 세 모델(terra, sol, luna)이 모두 하위 8개에 듭니다. terra와 sol의 가장 큰 오답 행선지는 luna이고, luna는 terra와 6-astra로 0.20씩 갑니다.
@@ -90,11 +90,11 @@ v4 validation(fold 0 지문 540개)에서 정답 지문이 다른 모델로 예�
 ## 파일
 
 - `oof_v4.npz`: v4 5-fold 예측. `y`, `fold`, `oof_ng`, `lora_oof`, `eval_lp`(블렌드 log 확률), 온도, `blend_w`, `labels`. 이 보고서는 `fold == 0`인 540개만 씁니다.
-- `oof_v1.npz` ~ `oof_v3.npz`: v1~v3를 저장된 가중치로 Colab T4에서 다시 돌린 예측. `eval_idx`(fold 0 지문 540개), `eval_lp`(블렌드 log 확률), `holdout_logits`, `oof_ng`. 점수가 제출 커널 로그와 같습니다.
+- `oof_v1.npz` \~ `oof_v3.npz`: v1\~v3를 저장된 가중치로 Colab T4에서 다시 돌린 예측. `eval_idx`(fold 0 지문 540개), `eval_lp`(블렌드 log 확률), `holdout_logits`, `oof_ng`. 점수가 제출 커널 로그와 같습니다.
 - `common.py`: 네 버전의 fold 0 예측을 같은 순서로 읽는 함수. 아래 그림 스크립트가 모두 이것을 씁니다.
 - `figures/scores*.png`, `figures/recall_*.png`, `figures/org_*.png`, `plot_tables.py`: 점수·recall·기업 단위 그래프(`python3 plot_tables.py . figures`)
 - `figures/cm_*.png`, `plot_confusion.py`: 기업 내부 혼동 행렬(`python3 plot_confusion.py figures`)
-- `figures/weak_models_v4.png`, `plot_weak.py`: 약한 모델의 예측 행선지(`python3 plot_weak.py figures`)
+- `figures/weak_models_v4.png`, `plot_weak.py`: 오답이 많이 나왔던 모델의 예측 행선지(`python3 plot_weak.py figures`)
 - `figures/top_pairs_v4.png`, `plot_top_pairs.py`: 가장 많이 헷갈린 쌍 Top 12(`python3 plot_top_pairs.py figures`)
 - `figures/architecture_v4.png`, `plot_architecture.py`: 부록의 v4 모델 구조(`python3 plot_architecture.py figures`)
 - `v4_oof_colab_executed.ipynb`: Colab 실행 노트북. recall 그래프와 혼동 행렬 그림이 들어 있습니다.
