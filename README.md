@@ -32,8 +32,9 @@
 
 ## 결과
 
-아래 수치는 `name_that_llm_v2.ipynb`의 저장된 실행 출력에 기록된 balanced accuracy입니다.
-이후 버전의 결과는 [EXPERIMENTS.md](EXPERIMENTS.md)에 있습니다.
+아래 수치는 `name_that_llm_v2.ipynb`에 저장된 Colab 학습 실행 출력의 balanced accuracy입니다.
+제출 커널(Kaggle T4)에서는 LoRA 출력이 조금 달라 LoRA 0.5222, 블렌드 0.5444였습니다.
+모든 버전의 제출 기준 수치는 [EXPERIMENTS.md](EXPERIMENTS.md)에 있습니다.
 
 - n-gram 5-fold OOF: **0.4667** (`## 3. n-gram 모델`의 코드 셀 출력)
 - n-gram fold 0: **0.4593** (같은 코드 셀의 fold 0 출력)
@@ -78,7 +79,7 @@ OOF 전체와 fold 0 점수는 평가 범위가 다릅니다. 위 점수는 리�
 
 | 노트북 | 버전 | Public LB |
 |---|---|:-:|
-| `name_that_llm_v1.ipynb` | LoRA(train만) + n-gram. v2 코드에서 Open Pool을 끈 재구성본, 실행 결과 없음 | 0.451 |
+| `name_that_llm_v1.ipynb` | LoRA(train만) + n-gram. Open Pool을 쓰지 않음 | 0.451 |
 | `name_that_llm_v2.ipynb` | LoRA(Open Pool Stage 1 + Stage 2) + n-gram | 0.507 |
 | `name_that_llm_v3.ipynb` | n-gram train 가중치 12, Sinkhorn, 블렌드 가중치 0.6 고정 | 0.536 |
 | `name_that_llm_v4.ipynb` | Qwen echo 입력 + LoRA 5-fold | 0.545 |
