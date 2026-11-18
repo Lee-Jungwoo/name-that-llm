@@ -59,6 +59,42 @@ xychart-beta
 3. **블렌드 가중치 고정**: `w = 0.6`으로 고정했습니다. 홀드아웃 최고값을 고르니 실행마다 0.5와 1.0을 오가서입니다.
 4. **LoRA 재학습**: Open Pool이 갱신돼서(223,840 → 226,191행) 다시 학습했습니다.
 
+#### n-gram train 가중치를 주는 방법
+
+데이터를 복사해서 늘리지 않습니다. 지문마다 중요도 숫자를 하나씩 붙여 `LinearSVC.fit`의 `sample_weight`로 넘깁니다.
+
+```python
+def fit_svc(train_idx, train_weight):
+    Xs = [X_train[train_idx]]
+    ys = [y[train_idx]]
+    ws = [np.full(len(train_idx), train_weight)]  # train 지문마다 12
+    if X_pool is not None:
+        Xs.append(X_pool)
+        ys.append(y_pool)
+        ws.append(np.ones(len(y_pool)))           # 풀 지문마다 1
+    model = LinearSVC(C=CFG["svc_c"])
+    model.fit(sparse.vstack(Xs).tocsr(), np.concatenate(ys),
+              sample_weight=np.concatenate(ws))
+    return model
+```
+
+LinearSVC는 다음 값을 최소화합니다. 여기서 $s_i$가 `sample_weight`입니다.
+
+$$
+\frac{1}{2}\|w\|^2 + C \sum_i s_i \cdot \text{hinge}_i
+$$
+
+train 지문 하나를 틀리면 벌점이 12배가 됩니다. 효과는 train 지문을 12번 복사해 넣은 것과 거의 같지만, 메모리와 학습 시간은 늘지 않습니다.
+
+- **왜 올렸나**: train은 풀(45,000개)보다 17배쯤 적습니다. 가중치가 1이면 학습에서 train이 차지하는 몫이 6%도 안 됩니다. 그런데 테스트와 분포가 더 비슷한 쪽은 대회 데이터인 train일 가능성이 큽니다.
+- **고르는 방법**: 후보 {1, 4, 12}마다 5-fold OOF를 만듭니다. fold마다 학습용 4개 fold의 train 지문에만 가중치를 주고, 남은 fold는 학습에 넣지 않고 예측만 합니다. 풀은 매번 가중치 1로 전부 들어갑니다.
+
+| train 가중치 | 1 | 4 | 12 |
+|:-:|:-:|:-:|:-:|
+| 전체 가중치 중 train 비율 | 약 6% | 약 19% | 약 42% |
+
+- 12가 후보 중 가장 큰 값이라 더 큰 값(20, 30 등)에서 더 오를 수도 있습니다. 아직 시험하지 않았습니다.
+
 ### 실험 세팅
 | 단계 | 환경 | 시간 |
 |---|---|---|
