@@ -32,7 +32,8 @@
 
 ## 결과
 
-아래 수치는 `name_that_llm.ipynb`의 저장된 실행 출력에 기록된 balanced accuracy입니다.
+아래 수치는 `name_that_llm_v2.ipynb`의 저장된 실행 출력에 기록된 balanced accuracy입니다.
+이후 버전의 결과는 [EXPERIMENTS.md](EXPERIMENTS.md)에 있습니다.
 
 - n-gram 5-fold OOF: **0.4667** (`## 3. n-gram 모델`의 코드 셀 출력)
 - n-gram fold 0: **0.4593** (같은 코드 셀의 fold 0 출력)
@@ -73,6 +74,15 @@ OOF 전체와 fold 0 점수는 평가 범위가 다릅니다. 위 점수는 리�
 
 ## 파일 구성
 
-- `name_that_llm.ipynb`: 데이터 처리, 검증, 두 분기 학습, 블렌딩과 제출 파일 생성을 담습니다.
+버전별 노트북입니다. 각 노트북은 데이터 처리, 검증, 두 분기 학습, 블렌딩과 제출 파일 생성을 담고, 첫 셀에 버전 설명이 있습니다.
+
+| 노트북 | 버전 | Public LB |
+|---|---|:-:|
+| `name_that_llm_v1.ipynb` | LoRA(train만) + n-gram. v2 코드에서 Open Pool을 끈 재구성본, 실행 결과 없음 | 0.451 |
+| `name_that_llm_v2.ipynb` | LoRA(Open Pool Stage 1 + Stage 2) + n-gram | 0.507 |
+| `name_that_llm_v3.ipynb` | n-gram train 가중치 12, Sinkhorn, 블렌드 가중치 0.6 고정 | 0.536 |
+| `name_that_llm_v4.ipynb` | Qwen echo 입력 + LoRA 5-fold | 0.545 |
+
+- `EXPERIMENTS.md`: 버전별 실험 기록입니다.
 - `colab_setup.py`: Colab CLI 세션의 모델 다운로드, 폴더 생성과 환경 변수 설정을 수행합니다.
 - `README.md`: 접근, 저장된 결과와 실행 방법을 정리합니다.

@@ -36,10 +36,10 @@ xychart-beta
 | 블렌딩 | 두 모델을 각각 온도 조정해 log 확률로 바꾼 뒤 `w·LoRA + (1−w)·n-gram`. `w`와 LoRA 온도는 fold 0 홀드아웃에서 최고값 선택 |
 | 후처리 | 테스트 지문을 주제 TF-IDF로 묶고, 묶음 평균의 0.5배를 뺌(프롬프트 중심화) |
 
-| 제출 | 홀드아웃 BA | Public LB |
-|---|:-:|:-:|
-| LoRA(train만) + n-gram | 0.4407 | 0.451 |
-| LoRA(Open Pool Stage 1 + Stage 2) + n-gram (`w` = 0.5 선택) | 0.5444 | **0.507** |
+| 제출 | 노트북 | 홀드아웃 BA | Public LB |
+|---|---|:-:|:-:|
+| v1: LoRA(train만) + n-gram | [name_that_llm_v1.ipynb](name_that_llm_v1.ipynb) | 0.4407 | 0.451 |
+| v2: LoRA(Open Pool Stage 1 + Stage 2) + n-gram (`w` = 0.5 선택) | [name_that_llm_v2.ipynb](name_that_llm_v2.ipynb) | 0.5444 | **0.507** |
 
 ---
 
@@ -60,7 +60,7 @@ xychart-beta
 | LoRA 학습 | Colab L4, bf16, 배치 8 | Stage 1 31분, Stage 2 3분 |
 | 제출 | Kaggle T4, 저장된 가중치로 추론만 (커널 `name-that-llm-lora` v3) | - |
 
-노트북: [name_that_llm.ipynb](name_that_llm.ipynb)
+노트북: [name_that_llm_v3.ipynb](name_that_llm_v3.ipynb)
 
 ### 결과
 | 항목 | 이전 | v3 | 변화 |
