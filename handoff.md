@@ -7,9 +7,9 @@
 | 항목 | 상태 |
 |---|---|
 | v5 노트북 | [name_that_llm_v5.ipynb](name_that_llm_v5.ipynb). v4 full에서 n-gram 분기에 문체 피처 27개(α = 0.2)만 추가 |
-| v5 Kaggle 커널 | `blkbeansoymilk/name-that-llm-v5-stylo` **버전 1 실행 중** (2026-11-24 22:18 KST쯤 푸시, v4 기준 약 33분) |
-| v5 제출 | **아직 안 함** |
-| EXPERIMENTS.md | **아직 v5 내용 없음.** 따로 파일을 만들지 않고 기존 [EXPERIMENTS.md](EXPERIMENTS.md)에 "실험 5"로 추가하기로 함 |
+| v5 Kaggle 커널 | `blkbeansoymilk/name-that-llm-v5-stylo` **버전 1 완료** (2026-11-24 22:18 KST쯤 푸시, 34.6분) |
+| v5 제출 | **제출함** (2026-11-24). Public LB **0.550** (v4 full 0.545보다 +0.005) |
+| EXPERIMENTS.md | **"실험 5"로 기록함** (커밋 `ffad936`). 따로 파일을 만들지 않고 기존 [EXPERIMENTS.md](EXPERIMENTS.md)에 추가함 |
 | v6 | [name_that_llm_v6.ipynb](name_that_llm_v6.ipynb). v4 + 블렌드 뒤 **회사 게이트**("5-1. 회사 게이트" 셀 하나). EXPERIMENTS.md 실험 6에 기록됨. 옛 v4 OOF로 잰 nested BA 0.5749 → 0.5864. **Kaggle 커널 없음, 미제출.** LoRA와 게이트를 함께 켠 실행은 아직 한 번도 안 함 |
 | v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**(5장 블렌드 3분기, 5-1장 게이트 입력에 DeBERTa 추가). **한 번도 실행 안 함**(문법만 확인). Colab 세션, Kaggle 데이터셋, 커널 모두 없음 |
 
@@ -39,17 +39,19 @@ n-gram 분기(4뷰 TF-IDF + LinearSVC)의 행렬 옆에 문체 피처 블록을 
 ## 3. 비교 기준: Open Pool이 바뀌었음
 
 > [!IMPORTANT]
-> Open Pool이 v4 실행(11/17, 226,191개) 뒤에 갱신되어 지금은 **231,036개**입니다. 같은 v4 n-gram 코드를 새 풀로 다시 돌리면 OOF가 0.4745에서 **0.4641**로 떨어집니다. 그래서 v5는 v4 로그 숫자가 아니라 **새 풀 기준선**과 비교해야 합니다.
+> Open Pool이 v4 실행(11/17, 226,191개) 뒤에 갱신되어 지금은 **231,036개**입니다. 같은 v4 n-gram 코드를 새 풀로 다시 돌리면 OOF가 0.4745에서 **0.4690**으로 떨어집니다(커널과 같은 fold 분할 기준). 그래서 v5는 v4 로그 숫자가 아니라 **새 풀 기준선**과 비교해야 합니다.
 
 | 설정 | 풀 | n-gram OOF | 블렌드 OOF (w = 0.6) | fold 0 블렌드 |
 |---|---|:-:|:-:|:-:|
 | v4 (11/17 Kaggle 로그) | 226,191 | 0.4745 | 0.5749 | 0.5593 |
-| v4 n-gram, 새 풀 (α = 0, 로컬 CPU) | 231,036 | **0.4641** | **0.5679** | 0.5463 |
-| v5 (α = 0.2) | 231,036 | 커널 로그에서 | 커널 로그에서 | |
+| v4 n-gram, 새 풀 (α = 0, 로컬 CPU, 커널 fold 분할) | 231,036 | **0.4690** | **0.5716** | 0.5537 |
+| v5 (α = 0.2, Kaggle 커널 로그) | 231,036 | 0.4749 | 0.5734 | 0.5593 |
 
-- 새 풀 기준선의 OOF와 로그: [v5_stylo/ngram_oof_alpha0_pool231k.npz](v5_stylo/ngram_oof_alpha0_pool231k.npz), [v5_stylo/baseline_alpha0_run.log](v5_stylo/baseline_alpha0_run.log). train 가중치 1 / 4 / 12 → 0.4604 / 0.4630 / 0.4641
+- 새 풀 기준선의 OOF와 로그: [v5_stylo/ngram_oof_alpha0_kernelfold.npz](v5_stylo/ngram_oof_alpha0_kernelfold.npz), [v5_stylo/alpha_sweep_run.log](v5_stylo/alpha_sweep_run.log). train 가중치는 12만 쟀습니다. 같은 방법으로 α = 0.2를 돌리면 n-gram 0.4756, 블렌드 0.5738로 커널 수치가 거의 재현됩니다([v5_stylo/ngram_oof_alpha0.2_kernelfold.npz](v5_stylo/ngram_oof_alpha0.2_kernelfold.npz)).
+- **fold 분할 주의**: `StratifiedGroupKFold(shuffle=True, random_state=42)`의 분할이 로컬(scikit-learn 1.9.1)과 제출 커널에서 다릅니다(scikit-learn 버전 차이로 보임, 추정). 로컬에서 OOF를 비교할 때는 [analysis_v4/oof_v4.npz](analysis_v4/oof_v4.npz)에 저장된 `fold`를 써야 합니다([v5_stylo/alpha_sweep.py](v5_stylo/alpha_sweep.py)가 그렇게 합니다). 노트북 첫 출력 "프롬프트 그룹 KFold BA"가 0.3145이면 커널과 같은 분할이고, 로컬 분할에서는 0.3115가 나옵니다.
+- 처음 잰 기준선(n-gram 0.4641, 블렌드 0.5679, fold 0 0.5463, train 가중치 1 / 4 / 12 → 0.4604 / 0.4630 / 0.4641)은 **커널과 다른 로컬 fold 분할로 잰 값이라 비교에 쓰지 않습니다.** 파일은 [v5_stylo/ngram_oof_alpha0_pool231k.npz](v5_stylo/ngram_oof_alpha0_pool231k.npz), [v5_stylo/baseline_alpha0_run.log](v5_stylo/baseline_alpha0_run.log)로 남아 있습니다.
 - 블렌드는 [v5_stylo/blend.py](v5_stylo/blend.py)로 계산합니다. n-gram OOF npz와 v4 LoRA OOF([analysis_v4/oof_v4.npz](analysis_v4/oof_v4.npz))로 노트북과 같은 온도 선택과 블렌드를 합니다. v4 원래 n-gram OOF를 넣으면 0.4745 / 0.5749 / 0.5593이 그대로 재현됩니다.
-- 새 풀 기준선 블렌드의 `w`별 OOF: 0.5 → 0.5593, 0.6 → 0.5679, 0.7 → 0.5753, 0.8 → 0.5764, 0.9 → 0.5775. 새 풀에서는 최고점이 `w` = 0.9 쪽으로 옮겨 갔습니다.
+- 새 풀 기준선 블렌드의 `w`별 OOF: 0.5 → 0.5649, 0.6 → 0.5716, 0.7 → 0.5742, 0.8 → 0.5775, 0.9 → 0.5731. 최고점은 옛 풀의 v4와 같은 `w` = 0.8입니다.
 
 ## 4. 바로 다음에 할 일
 
@@ -78,7 +80,7 @@ kaggle competitions submissions -c name-that-llm | head
 
 - 실험 6(v6) **앞에** 넣습니다. 기존 형식(요약 → 변한 점 → 실험 세팅 → 결과 → 해석)을 따릅니다. "한눈에 보기" 표와 "정리" 표에도 v5 행을 추가합니다.
 - 수치는 **제출 커널(Kaggle T4) 로그 기준**입니다(문서 머리의 NOTE).
-- **풀 갱신 때문에 기준선이 바뀐 점**(3장)을 꼭 적습니다. v5의 효과는 새 풀 기준선(n-gram 0.4641, 블렌드 0.5679)과 비교한 값입니다.
+- **풀 갱신 때문에 기준선이 바뀐 점**(3장)을 꼭 적습니다. v5의 효과는 새 풀 기준선(n-gram 0.4690, 블렌드 0.5716)과 비교한 값입니다.
 
 ### 4.3 v6: 회사 게이트 제출
 
@@ -188,13 +190,13 @@ nohup jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1
 
 ### 4.5 v5와 합치기
 
-v5가 새 풀 기준선(블렌드 0.5679)보다 나으면, v6·v7의 n-gram 셀에 문체 블록을 넣는 것을 검토합니다. v4 → v5 변경은 [v5_stylo/make_v5.py](v5_stylo/make_v5.py)의 3장(셀 16)과 `CFG` 부분입니다. 게이트를 v5 위에 얹으면 `gate_alpha`는 v5 OOF로 다시 고릅니다.
+v5가 새 풀 기준선(블렌드 0.5716)보다 나으면, v6·v7의 n-gram 셀에 문체 블록을 넣는 것을 검토합니다. v4 → v5 변경은 [v5_stylo/make_v5.py](v5_stylo/make_v5.py)의 3장(셀 16)과 `CFG` 부분입니다. 게이트를 v5 위에 얹으면 `gate_alpha`는 v5 OOF로 다시 고릅니다.
 
 ### 4.6 그 밖의 후보 (확정 아님)
 
 1. **α 다시 고르기**: 풀을 넣은 실제 분기에서 `stylo_alpha` ∈ {0.1, 0.2, 0.3}을 OOF로 비교합니다(CPU만, 1회 약 15분). 풀을 넣으면 TF-IDF 쪽이 강해져 최적값이 달라질 수 있습니다.
 2. **`n_words`, `n_sents` 빼기**: 풀과 train의 모델별 길이 분포가 다르면 SVC가 이 두 피처를 지름길로 배울 수 있습니다. 먼저 분포를 비교합니다.
-3. **블렌드 가중치 다시 보기**: 새 풀에서는 `w` = 0.6이 OOF 최고(0.9)보다 0.01쯤 낮습니다.
+3. **블렌드 가중치 다시 보기**: 새 풀에서는 `w` = 0.6이 OOF 최고(0.8)보다 0.003~0.006 낮습니다(기준선 0.5716 대 0.5775, v5 0.5734 대 0.5768).
 4. **헷갈리는 쌍 손실**: [analysis_intra_org/experiment_plan.md](analysis_intra_org/experiment_plan.md). 0단계(쌍별 bias, GPU 불필요) → 1단계(LoRA Stage 2에 쌍 손실 + KL 규제, Colab L4)입니다.
 
 ## 5. 서버 준비
