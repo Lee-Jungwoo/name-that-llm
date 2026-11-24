@@ -1,0 +1,22 @@
+[company] gpt-5.5/gpt-5.6-luna/gpt-5.6-sol/gpt-5.6-terra/gpt-6-astra: 내부정확도 v4 0.624 | stack 0.631 | text 0.367
+[company] gemini-3.1-pro-preview/gemini-3.6-flash/gemini-3.7-flash/gemini-3.8-flash: 내부정확도 v4 0.648 | stack 0.630 | text 0.450
+[company] claude-fable-5/claude-opus-4-6/claude-opus-4-8/claude-opus-5/claude-sonnet-5: 내부정확도 v4 0.726 | stack 0.720 | text 0.449
+[company] glm-5.3/glm-5.3-flash: 내부정확도 v4 0.573 | stack 0.657 | text 0.480
+[confusion] claude-fable-5/glm-5.3/glm-5.3-flash: 내부정확도 v4 0.450 | stack 0.472 | text 0.354
+[confusion] gpt-5.5/gpt-5.6-luna/gpt-5.6-sol/gpt-5.6-terra/gpt-6-astra: 내부정확도 v4 0.624 | stack 0.631 | text 0.367
+[confusion] gemini-3.6-flash/gemini-3.7-flash/gemini-3.8-flash: 내부정확도 v4 0.616 | stack 0.613 | text 0.440
+[confusion] claude-opus-4-6/claude-opus-4-8/claude-opus-5/claude-sonnet-5: 내부정확도 v4 0.817 | stack 0.807 | text 0.542
+
+v4 OOF BA 0.5749
+company   stack gate  best-alpha 0.5882 (+0.0133)  nested 0.5860 (+0.0111)  alpha=[0.75, 0.25, 0.5, 1.0]
+company   stack v40a  best-alpha 0.5831 (+0.0082)  nested 0.5753 (+0.0004)  alpha=[1, 0.25, 1.5, 1.5]
+company   stack free  best-alpha 0.5756 (+0.0007)  nested 0.5738 (-0.0011)  alpha=[0, 0, 0, 0.5]
+company   text  gate  best-alpha 0.5775 (+0.0026)  nested 0.5760 (+0.0011)  alpha=[0, 0.25, 0, 0.25]
+company   text  v40a  best-alpha 0.5760 (+0.0011)  nested 0.5745 (-0.0004)  alpha=[0, 0.5, 0, 0]
+company   text  free  best-alpha 0.5753 (+0.0004)  nested 0.5712 (-0.0037)  alpha=[0, 0.25, 0, 0]
+confusion stack gate  best-alpha 0.5856 (+0.0107)  nested 0.5801 (+0.0052)  alpha=[1.0, 0.75, 0.25, 0.25]
+confusion stack v40a  best-alpha 0.5831 (+0.0081)  nested 0.5782 (+0.0033)  alpha=[2, 1.5, 0.25, 3]
+confusion stack free  best-alpha 0.5760 (+0.0011)  nested 0.5738 (-0.0011)  alpha=[0.25, 0, 0, 0]
+confusion text  gate  best-alpha 0.5782 (+0.0033)  nested 0.5782 (+0.0033)  alpha=[0.25, 0, 0, 0]
+confusion text  v40a  best-alpha 0.5775 (+0.0026)  nested 0.5753 (+0.0004)  alpha=[0.5, 0, 0, 0.25]
+confusion text  free  best-alpha 0.5771 (+0.0022)  nested 0.5753 (+0.0004)  alpha=[0.25, 0, 0, 0.25]

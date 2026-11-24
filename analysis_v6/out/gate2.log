@@ -1,0 +1,12 @@
+[C=0.1 stack] 내부정확도 gpt 0.628, gemini 0.635, claude 0.724, glm 0.643
+C=0.1 stack            best-alpha 0.5857 (+0.0107) alpha=[0.75, 0.5, 0.25, 1.0] | nested 0.5827 (+0.0078)
+[C=0.1 stack+svc] 내부정확도 gpt 0.637, gemini 0.637, claude 0.722, glm 0.650
+C=0.1 stack+svc        best-alpha 0.5860 (+0.0111) alpha=[0.75, 0, 0.5, 1.0] | nested 0.5827 (+0.0078)
+[C=1.0 stack] 내부정확도 gpt 0.631, gemini 0.630, claude 0.720, glm 0.657
+C=1.0 stack            best-alpha 0.5882 (+0.0133) alpha=[0.75, 0.25, 0.5, 1.0] | nested 0.5864 (+0.0115)
+[C=1.0 stack+svc] 내부정확도 gpt 0.633, gemini 0.637, claude 0.713, glm 0.653
+C=1.0 stack+svc        best-alpha 0.5864 (+0.0115) alpha=[1.0, 0.5, 0.5, 1.0] | nested 0.5801 (+0.0052)
+(0.1, 'stack'): nested dBA 95% [-0.0011, +0.0170] | 바뀐 지문 239 (고침 89, 망침 68)
+(0.1, 'stack+svc'): nested dBA 95% [-0.0015, +0.0167] | 바뀐 지문 220 (고침 85, 망침 64)
+(1.0, 'stack'): nested dBA 95% [+0.0033, +0.0200] | 바뀐 지문 222 (고침 91, 망침 60)
+(1.0, 'stack+svc'): nested dBA 95% [-0.0044, +0.0148] | 바뀐 지문 243 (고침 88, 망침 74)

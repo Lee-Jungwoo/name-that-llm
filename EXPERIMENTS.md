@@ -254,6 +254,35 @@ OOF 기준 `w`별 블렌드 BA:
 
 ---
 
+## 실험 6. v6: 회사 게이트 (v4 + 후처리)
+
+> [!NOTE]
+> **요약** · 블렌드 1순위가 한 회사이면 회사 확률 합은 두고, 회사 안 분포만 회사 전용 LR 쪽으로 옮깁니다. v4 OOF로 계산한 nested BA가 **0.5749 → 0.5864 (+0.0115)** 입니다. 아직 제출하지 않았습니다.
+
+### 변한 점
+- 블렌딩 뒤에 "회사 게이트" 셀 하나를 넣었습니다. 나머지는 v4와 같고, LoRA 가중치도 v4 것을 그대로 씁니다.
+- 회사(GPT·Gemini·Claude·GLM)마다, n-gram과 LoRA 각각의 회사 열 log 확률을 입력으로 회사 안 모델을 맞히는 로지스틱 회귀(C = 1)를 학습합니다.
+- 1순위가 그 회사 안인 지문만, 회사 안 분포를 비율 \(\alpha\)(GPT 0.75, Gemini 0.25, Claude 0.5, GLM 1.0)만큼 LR 쪽으로 옮깁니다.
+
+### 실험 세팅
+- GPU 없이 v4 OOF(`analysis_v4/oof_v4.npz`)와 train 텍스트로 비교했습니다. 자세한 내용은 [analysis_v6/report.md](analysis_v6/report.md)에 있습니다.
+- nested: fold 하나를 빼고 나머지 4개로 \(\alpha\)를 골라 뺀 fold에 적용합니다. 구간은 프롬프트 150개 단위 bootstrap 1,000회입니다.
+
+### 결과
+| 방식 | nested OOF BA | v4 대비 | 95% 구간 |
+|---|:-:|:-:|:-:|
+| v4 | 0.5749 | 기준 | - |
+| 회사 게이트 (채택) | **0.5864** | 🟢 +0.0115 | [+0.003, +0.020] |
+| 회사 게이트 + 회사 전용 n-gram SVC 입력 | 0.5801 | 🟢 +0.0052 | [−0.004, +0.015] |
+| V40A (모든 지문에 잔차, 회사 질량 보존) | 0.5753 | ⚪ +0.0004 | - |
+| 딱딱한 2단계 (회사 먼저 고르기) | 0.567 | 🔴 −0.008 | - |
+
+### 해석
+- fold 5개 모두에서 올랐고, 가장 큰 이득은 GLM(회사 안 정확도 0.573 → 0.657)과 gpt-5.6-sol·terra(recall +0.060)입니다.
+- 회사 전용 n-gram SVC를 Open Pool로 따로 학습해도 나아지지 않았습니다. 이득은 새 신호가 아니라, 기존 두 분기의 점수를 회사마다 다르게 다시 조합한 데서 나온 것으로 보입니다.
+
+---
+
 ## 정리
 
 | 제출 | 핵심 변경 | 검증 BA | Public LB |
@@ -264,12 +293,13 @@ OOF 기준 `w`별 블렌드 BA:
 | v3 | + Sinkhorn | 0.5389 (fold 0) | 0.536 |
 | v4 folds | + echo 입력, LoRA 5-fold, 테스트 = fold 5개 평균 | 0.5749 (OOF) | 0.543 |
 | v4 full | + echo 입력, LoRA 5-fold, 테스트 = 전체 학습 모델 | 0.5749 (OOF) | **0.545** |
+| v6 | v4 + 회사 게이트 | 0.5864 (nested OOF) | 미제출 |
 
 - 검증 BA는 Sinkhorn을 적용하기 전 값입니다. v4의 fold 0만 보면 0.5593입니다.
 
 ## 재현용 파일
 
-- 노트북: [v1](name_that_llm_v1.ipynb), [v2](name_that_llm_v2.ipynb), [v3](name_that_llm_v3.ipynb), [v4](name_that_llm_v4.ipynb)
+- 노트북: [v1](name_that_llm_v1.ipynb), [v2](name_that_llm_v2.ipynb), [v3](name_that_llm_v3.ipynb), [v4](name_that_llm_v4.ipynb), [v6](name_that_llm_v6.ipynb)
 - 가중치는 `weights_v4/`, `ntl_lora_v*.pt`(git 제외)와 Kaggle 데이터셋에 있습니다.
   - v1: `ntl-lora-weights`
   - v2: `ntl-lora-weights-pool`
