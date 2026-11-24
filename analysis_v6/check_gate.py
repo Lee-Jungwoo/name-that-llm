@@ -1,4 +1,4 @@
-"""고정 alpha 게이트의 fold별, 모델별 변화와 Sinkhorn과의 겹침. 사용법: python check_gate.py <repo> <famsvc npz>"""
+"""고정 alpha 게이트의 fold별, 모델별 변화와 Sinkhorn과의 겹침. 사용법: python check_gate.py <repo> [famsvc npz | -] [OOF npz] (인자는 gate2.py와 같음)"""
 import sys, numpy as np
 from pathlib import Path
 exec(open(Path(__file__).parent / "gate2.py").read().split("res = {}")[0])  # gate2.py의 함수와 데이터 로드만 재사용

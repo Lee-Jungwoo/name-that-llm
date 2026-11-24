@@ -1,4 +1,10 @@
-"""회사 게이트: 특화 분류기 입력(stack: n-gram+LoRA / stack+svc: + 회사 전용 SVC) 비교, nested alpha, 프롬프트 bootstrap."""
+"""회사 게이트: 특화 분류기 입력(stack: n-gram+LoRA / stack+svc: + 회사 전용 SVC) 비교, nested alpha, 프롬프트 bootstrap.
+
+사용법: python gate2.py <repo> [famsvc npz | -] [OOF npz]
+- famsvc npz를 "-"로 주거나 생략하면 stack+svc는 건너뜁니다.
+- OOF npz 기본값은 <repo>/analysis_v4/oof_v4.npz입니다. 환경 변수 NTL_OOF로도 바꿀 수 있습니다(인자가 우선).
+"""
+import os
 import sys
 from pathlib import Path
 
@@ -6,8 +12,11 @@ import numpy as np
 from scipy.special import logsumexp, log_softmax
 from sklearn.linear_model import LogisticRegression
 
-ROOT, FS = Path(sys.argv[1]), np.load(sys.argv[2])
-d = np.load(ROOT / "analysis_v4" / "oof_v4.npz", allow_pickle=True)
+ROOT = Path(sys.argv[1])
+FS = np.load(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] != "-" else None
+OOF = Path(sys.argv[3] if len(sys.argv) > 3 else os.environ.get("NTL_OOF", ROOT / "analysis_v4" / "oof_v4.npz"))
+d = np.load(OOF, allow_pickle=True)
+print(f"OOF: {OOF}")
 L = [str(x) for x in d["labels"]]
 I = {l: i for i, l in enumerate(L)}
 y, fold, base, ng, lo, pid = d["y"], d["fold"], d["eval_lp"], d["ng_oof_lp"], d["lora_lp"], d["prompt_id"]
@@ -78,7 +87,7 @@ def evaluate(Ss, label):
 
 res = {}
 for C in [0.1, 1.0]:
-    for src in ["stack", "stack+svc"]:
+    for src in ["stack", "stack+svc"] if FS is not None else ["stack"]:
         Ss = []
         for name, cols in FAMS.items():
             feats = [ng[:, cols], lo[:, cols]]
