@@ -1,0 +1,276 @@
+
+======== 1. 라벨 대응 ========
+corpus 모델 열: ['claude-fable-5', 'claude-opus-4-6', 'claude-opus-4-8', 'claude-opus-5', 'claude-sonnet-5', 'gemini-3.1-pro-preview', 'gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.8-flash', 'glm-5.3', 'glm-5.3-flash', 'gpt-5.5', 'gpt-5.6-luna', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-6-astra', 'kimi-k3', 'qwen3.8-max']
+프로젝트 LABELS에 없는 열: [] | corpus에 없는 라벨: []
+
+======== 2. 중복 ========
+셀 24,025개, response_id 24,015개, 프롬프트 그룹 12,032개
+같은 라벨 안 정규화 중복 11개, 서로 다른 라벨에 같은 정규화 텍스트 0종
+train과 정규화 텍스트가 같은 셀 0개, Open Pool과 같은 셀 0개
+긴 셀 2,000개 표본 중 train 지문을 통째로 포함한 셀 0개
+
+======== 3. 라벨별 행 수와 길이 (공백 기준 단어 수) ========
+                          count    min     25%     50%     75%     max  train_n  train_50%  pool_n
+model                                                                                             
+gpt-5.5                1111.000 41.000 119.000 167.000 209.000 250.000      150    103.500   14315
+gpt-5.6-luna           2285.000 40.000  85.000 140.000 194.000 250.000      150    104.500   18894
+gpt-5.6-sol            3395.000 40.000  60.000  99.000 172.000 250.000      150    111.500   14720
+gpt-5.6-terra          1544.000 40.000  78.000 124.000 194.000 250.000      150    100.500   15719
+gpt-6-astra             723.000 40.000  60.000  94.000 192.000 250.000      150    105.500   11841
+gemini-3.1-pro-preview 1141.000 40.000  64.000 115.000 164.000 250.000      150    104.000   10513
+gemini-3.6-flash         83.000 40.000  45.500  55.000  67.000 246.000      150     95.500   18447
+gemini-3.7-flash         77.000 41.000  52.000  72.000 153.000 239.000      150    101.500    3541
+gemini-3.8-flash         71.000 40.000  49.500  57.000  71.500 250.000      150     84.000   23542
+claude-fable-5         1148.000 40.000 126.000 188.000 224.000 250.000      149    100.000   12773
+claude-opus-4-6        4911.000 40.000 121.000 198.000 224.000 250.000      150     98.500   11168
+claude-opus-4-8        1428.000 40.000 147.000 195.000 226.000 250.000      150    109.000   12158
+claude-opus-5           828.000 40.000 108.000 168.000 218.250 250.000      150    116.500    9880
+claude-sonnet-5        1133.000 40.000 120.000 182.000 220.000 250.000      150     99.500   13248
+qwen3.8-max             799.000 40.000  87.000 141.000 183.000 250.000      150     98.500    4566
+glm-5.3                 603.000 50.000 106.000 175.000 217.500 250.000      150     96.000   12450
+glm-5.3-flash          1056.000 40.000  88.000 158.500 209.250 250.000      150    112.000   12745
+kimi-k3                1689.000 40.000 125.000 177.000 215.000 250.000      150     89.000   10516
+train 길이 분위수 5/25/50/75/95: [44.0, 64.0, 101.0, 157.0, 224.0] | corpus: [50.0, 90.0, 158.0, 212.0, 242.0]
+corpus 중 train의 5~95% 길이 범위(44~224단어)에 드는 비율: 0.818
+
+======== 4. 출처와 도메인 ========
+source
+speechmap                                           8658
+eqbench4                                            7221
+angrygiraffe/claude-opus-4.6-4.7-reasoning-8.7k     1934
+zlab-princeton/SWEeper-Bench-traces                 1383
+Crownelius/GPT-5.6-Sol-Luna-Terra-Traces            1248
+petergpt/bullshit-benchmark                         1196
+glm_flash_analysis                                   844
+woog/arena-prose-100-49-models                       427
+greghavens/kimi-k3-coding-and-debugging-traces       316
+novigens/token-efficiency-benchmark                  233
+artificialanalysis_microevals                        190
+PawanKrd/claude-fable-5-code                         120
+Zek-Takai/glm53-flash-harvest                         84
+copilot_model_value_benchmark                         57
+evaleval/EEE_datastore                                57
+periospot_dental_benchmark                            21
+artindnr/khayyam-challenge                            17
+Met4physics/claude-opus-4-8-xhigh-reasoning-8.7k      14
+eqbench_creative_writing_longform                      5
+
+라벨 x 출처(상위 8개 출처):
+source                  Crownelius/GPT-5.6-Sol-Luna-Terra-Traces  angrygiraffe/claude-opus-4.6-4.7-reasoning-8.7k  eqbench4  glm_flash_analysis  petergpt/bullshit-benchmark  speechmap  woog/arena-prose-100-49-models  zlab-princeton/SWEeper-Bench-traces   기타
+model                                                                                                                                                                                                                                                            
+gpt-5.5                                                        0                                                0       551                   0                           89        392                              51                                    0   28
+gpt-5.6-luna                                                 590                                                0       808                   0                          130        468                              58                                  197   34
+gpt-5.6-sol                                                  658                                                0       707                   0                          192       1519                              64                                  199   56
+gpt-5.6-terra                                                  0                                                0       709                   0                           81        490                              49                                  200   15
+gpt-6-astra                                                    0                                                0         0                   0                          159        300                              50                                  200   14
+gemini-3.1-pro-preview                                         0                                                0       786                   0                            9        333                               4                                    0    9
+gemini-3.6-flash                                               0                                                0         0                   0                           14         67                               0                                    0    2
+gemini-3.7-flash                                               0                                                0         0                   0                           24         42                               0                                    0   11
+gemini-3.8-flash                                               0                                                0         0                   0                            0         47                               0                                    0   24
+claude-fable-5                                                 0                                                0       553                   0                            7        352                              40                                    0  196
+claude-opus-4-6                                                0                                             1934       565                   0                          157       2198                               0                                    0   57
+claude-opus-4-8                                                0                                                0       751                   0                           59        477                              37                                    0  104
+claude-opus-5                                                  0                                                0       631                   0                           15        155                               7                                    0   20
+claude-sonnet-5                                                0                                                0       710                   0                           46        307                              19                                    0   51
+qwen3.8-max                                                    0                                                0         0                 282                          102        229                               0                                  186    0
+glm-5.3                                                        0                                                0         0                   0                           44        356                               0                                  200    3
+glm-5.3-flash                                                  0                                                0         0                 263                            0        443                              34                                  200  116
+kimi-k3                                                        0                                                0       450                 299                           68        483                              14                                    1  374
+
+도메인(앞부분): {'sensitive_topics': 8658, 'emotional_support_dialogue': 7221, 'agentic_coding': 2041, 'invalid-premise benchmark ': 1196, 'coding': 936, 'technical_qa': 844, 'prose': 427, 'agent': 311, 'general': 257, 'roleplay_hero': 241, 'synthetic_math_and_code_reasoning': 233, 'public_user_microevaluation': 190, 'roleplay_villain': 144, 'quantitative_problem_solving ': 125, 'humanities': 118}
+품질 플래그 비율: {'truncation_metadata_missing': 0.513, 'license_unknown': 0.376, 'output_terms_review': 0.439, 'prompt_exact': 0.999}
+프롬프트 그룹당 라벨 수 분포: {1: 10238, 2: 451, 3: 233, 4: 124, 5: 110, 6: 116, 7: 267, 8: 72, 9: 68, 10: 83, 11: 117, 12: 41, 13: 51, 14: 28, 15: 19, 16: 11, 17: 3}
+
+======== 5. 장르 표지 (비율) ========
+                  n  줄바꿈 있음  문단 2개 이상  마크다운/목록/코드  코드펜스  거절로 시작  1·2인칭(I/you) 있음
+train      2699.000   0.000     0.000       0.000 0.000   0.000            0.180
+pool(전체) 231036.000   0.000     0.000       0.000 0.000   0.000            0.178
+corpus    24025.000   0.942     0.939       0.552 0.041   0.279            0.771
+
+출처별:
+                                                       n  줄바꿈 있음  문단 2개 이상  마크다운/목록/코드  코드펜스  거절로 시작  1·2인칭(I/you) 있음
+source                                                                                                               
+speechmap                                       8658.000   0.935     0.935       0.777 0.000   0.757            0.959
+eqbench4                                        7221.000   0.937     0.937       0.026 0.000   0.011            0.999
+angrygiraffe/claude-opus-4.6-4.7-reasoning-8.7k 1934.000   0.868     0.868       0.437 0.242   0.001            0.580
+zlab-princeton/SWEeper-Bench-traces             1383.000   1.000     0.971       0.960 0.004   0.001            0.046
+Crownelius/GPT-5.6-Sol-Luna-Terra-Traces        1248.000   0.950     0.925       0.784 0.196   0.000            0.127
+petergpt/bullshit-benchmark                     1196.000   0.985     0.985       0.936 0.011   0.033            0.777
+glm_flash_analysis                               844.000   0.999     0.998       0.842 0.075   0.000            0.194
+woog/arena-prose-100-49-models                   427.000   0.993     0.986       0.878 0.019   0.021            0.604
+greghavens/kimi-k3-coding-and-debugging-traces   316.000   0.991     0.949       0.978 0.073   0.000            0.266
+novigens/token-efficiency-benchmark              233.000   1.000     1.000       0.884 0.026   0.000            0.009
+artificialanalysis_microevals                    190.000   0.974     0.968       0.800 0.263   0.047            0.395
+PawanKrd/claude-fable-5-code                     120.000   0.992     0.992       0.975 0.617   0.000            0.442
+
+라벨별(corpus):
+                              n  줄바꿈 있음  문단 2개 이상  마크다운/목록/코드  코드펜스  거절로 시작  1·2인칭(I/you) 있음
+model                                                                                       
+gpt-5.5                1111.000   0.998     0.997       0.502 0.006   0.356            0.934
+gpt-5.6-luna           2285.000   0.900     0.887       0.485 0.035   0.202            0.647
+gpt-5.6-sol            3395.000   0.917     0.916       0.647 0.057   0.400            0.662
+gpt-5.6-terra          1544.000   0.983     0.983       0.387 0.007   0.330            0.828
+gpt-6-astra             723.000   0.999     0.999       0.740 0.004   0.173            0.657
+gemini-3.1-pro-preview 1141.000   0.744     0.743       0.021 0.000   0.277            0.994
+gemini-3.6-flash         83.000   0.458     0.458       0.169 0.012   0.807            0.988
+gemini-3.7-flash         77.000   0.701     0.701       0.494 0.039   0.545            0.896
+gemini-3.8-flash         71.000   0.549     0.549       0.127 0.000   0.662            0.704
+claude-fable-5         1148.000   0.970     0.970       0.520 0.065   0.288            0.864
+claude-opus-4-6        4911.000   0.941     0.941       0.616 0.099   0.156            0.786
+claude-opus-4-8        1428.000   0.996     0.996       0.464 0.001   0.287            0.938
+claude-opus-5           828.000   0.978     0.978       0.205 0.012   0.193            0.979
+claude-sonnet-5        1133.000   0.939     0.939       0.362 0.007   0.244            0.949
+qwen3.8-max             799.000   0.981     0.981       0.782 0.020   0.278            0.529
+glm-5.3                 603.000   0.997     0.990       0.952 0.000   0.534            0.655
+glm-5.3-flash          1056.000   0.993     0.959       0.917 0.032   0.382            0.582
+kimi-k3                1689.000   0.992     0.984       0.671 0.031   0.285            0.693
+
+'한 문단 + 마크다운 없음 + 거절 아님' 셀: 831개
+model  gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+plain                                                                                                                                                                                                                                                                              
+False     1109          2062         3271           1518          722                    1125                83                77                71            1114             4622             1422            810             1064          798      601           1049     1676
+True         2           223          124             26            1                      16                 0                 0                 0              34              289                6             18               69            1        2              7       13
+
+======== 6. 표본 텍스트 (라벨마다 3개, 앞 300자) ========
+(--samples를 줄 때만 출력합니다. 라이선스가 불분명한 외부 텍스트와 대회 지문을 저장소 로그에 남기지 않기 위해서입니다.)
+
+======== 7. 문체 피처 27개: train / Open Pool 표본(노트북과 같은 45,000개) / corpus ========
+                  train    pool  corpus  (pool-train)/sd  (corpus-train)/sd
+n_words         115.723 114.129 148.759           -0.027              0.562
+n_sents           4.844   5.286   7.908            0.205              1.421
+sent_len_mean    24.326  22.184  23.289           -0.205             -0.099
+sent_len_std      5.997   6.318  14.614            0.093              2.498
+word_len_mean     5.436   5.328   5.184           -0.202             -0.473
+long_word_ratio   0.141   0.130   0.136           -0.173             -0.078
+mattr             0.907   0.894   0.865           -0.334             -1.046
+func_ratio        0.315   0.321   0.324            0.105              0.144
+em_dash           0.618   0.632   1.153            0.015              0.589
+spaced_em_dash    0.041   0.054   0.668            0.053              2.491
+en_dash           0.005   0.009   0.140            0.052              1.587
+semicolon         0.408   0.406   0.318           -0.004             -0.145
+colon             0.594   0.589   2.168           -0.007              2.254
+comma             9.238   8.812   6.320           -0.134             -0.921
+paren             0.018   0.030   1.096            0.042              3.652
+question          0.032   0.055   0.462            0.110              2.050
+curly_apos        0.306   0.352   0.857            0.063              0.748
+straight_apos     0.513   0.541   2.310            0.028              1.815
+curly_quote       0.079   0.111   0.975            0.067              1.886
+straight_quote    0.082   0.133   0.878            0.103              1.625
+contraction       0.787   0.847   2.950            0.055              1.994
+first_person      0.952   0.812   1.908           -0.075              0.512
+second_person     0.545   0.510   1.881           -0.021              0.822
+not_but           0.281   0.141   0.039           -0.273             -0.473
+ly_adverb         1.791   2.162   1.859            0.228              0.042
+conj_start        0.033   0.032   0.047           -0.017              0.169
+mid_caps          0.013   0.018   0.059            0.213              2.325
+
+라벨별 평균의 train과의 거리 (피처 27개에 대해 |차이|/train 표준편차의 평균):
+                        pool  corpus  corpus_n
+gpt-5.5                0.150   1.169      1111
+gpt-5.6-luna           0.153   1.341      2285
+gpt-5.6-sol            0.141   0.759      3395
+gpt-5.6-terra          0.149   0.822      1544
+gpt-6-astra            0.161   1.793       723
+gemini-3.1-pro-preview 0.098   0.775      1141
+gemini-3.6-flash       0.110   0.522        83
+gemini-3.7-flash       0.155   1.109        77
+gemini-3.8-flash       0.136   1.173        71
+claude-fable-5         0.091   1.577      1148
+claude-opus-4-6        0.114   1.277      4911
+claude-opus-4-8        0.099   1.454      1428
+claude-opus-5          0.094   1.808       828
+claude-sonnet-5        0.117   1.685      1133
+qwen3.8-max            0.130   1.397       799
+glm-5.3                0.113   0.914       603
+glm-5.3-flash          0.133   1.320      1056
+kimi-k3                0.148   1.520      1689
+
+라벨 간 차이가 보존되는가: 피처마다 라벨 18개 평균의 Spearman 상관 (train 대 pool, train 대 corpus)
+                train~pool  train~corpus
+feature                                 
+em_dash              0.986         0.634
+spaced_em_dash       0.759         0.423
+en_dash              0.817         0.518
+semicolon            0.975         0.513
+colon                0.983         0.271
+comma                0.971         0.098
+paren                0.925        -0.168
+curly_apos           0.974         0.884
+straight_apos        0.953         0.728
+curly_quote          0.904         0.604
+straight_quote       0.914         0.528
+contraction          0.936         0.645
+first_person         0.645        -0.265
+second_person        0.899         0.055
+not_but              0.872         0.401
+sent_len_mean        0.490         0.360
+word_len_mean        0.876         0.263
+mattr                0.905        -0.077
+func_ratio           0.822         0.197
+n_words              0.744         0.216
+평균: {'train~pool': 0.868, 'train~corpus': 0.341}
+
+타이포그래피 표지의 라벨별 평균(100단어당): train | pool | corpus
+-- em_dash
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.180         0.480        0.340          0.370        0.140                   0.000             0.000             0.010             0.000           1.360            1.130            0.860          1.220            1.220        0.050    1.510          1.370    0.880
+pool      0.190         0.510        0.350          0.340        0.120                   0.000             0.000             0.000             0.000           1.480            1.210            0.920          1.270            1.210        0.070    1.450          1.340    0.910
+corpus    0.670         0.740        0.960          0.950        1.280                   0.400             0.100             0.210             1.560           1.650            0.930            1.520          2.850            2.430        0.620    1.110          1.550    1.480
+-- semicolon
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.750         0.450        0.640          0.520        0.590                   0.160             0.200             0.200             0.280           0.350            0.120            0.190          0.580            0.230        0.380    0.370          0.530    0.820
+pool      0.660         0.430        0.700          0.540        0.540                   0.160             0.220             0.190             0.310           0.370            0.150            0.220          0.590            0.250        0.420    0.380          0.480    0.690
+corpus    0.170         0.610        0.550          0.280        0.370                   0.050             0.010             0.150             0.000           0.800            0.160            0.140          0.020            0.080        0.290    0.300          0.370    0.360
+-- curly_apos
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.680         0.710        0.820          0.710        0.680                   0.050             0.210             0.360             0.320           0.000            0.000            0.000          0.000            0.000        0.510    0.000          0.000    0.460
+pool      0.680         0.810        0.850          0.670        0.840                   0.120             0.290             0.500             0.430           0.000            0.000            0.000          0.000            0.000        0.580    0.000          0.000    0.560
+corpus    3.280         2.150        1.720          2.820        1.380                   0.120             0.010             0.050             0.010           0.000            0.000            0.000          0.000            0.000        0.620    0.050          0.040    0.080
+-- straight_apos
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.150         0.020        0.000          0.050        0.140                   0.130             0.250             0.180             0.150           1.010            0.980            0.900          1.010            1.490        0.170    1.070          1.110    0.420
+pool      0.030         0.020        0.010          0.010        0.010                   0.300             0.300             0.290             0.220           1.130            0.960            0.960          1.000            1.410        0.070    1.260          1.270    0.490
+corpus    0.010         0.200        0.030          0.010        0.000                   2.680             0.270             0.330             0.450           4.480            3.610            5.460          6.470            5.240        1.440    2.300          1.970    3.100
+-- contraction
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.810         0.700        0.760          0.720        0.790                   0.160             0.450             0.520             0.470           0.980            0.950            0.870          0.990            1.460        0.630    1.000          1.050    0.850
+pool      0.680         0.790        0.810          0.650        0.800                   0.370             0.550             0.710             0.610           1.080            0.920            0.930          0.960            1.350        0.600    1.210          1.190    1.010
+corpus    3.240         2.150        1.680          2.780        1.310                   2.760             0.240             0.370             0.460           4.260            2.920            5.440          6.380            5.220        1.670    2.320          1.960    3.060
+-- first_person
+        gpt-5.5  gpt-5.6-luna  gpt-5.6-sol  gpt-5.6-terra  gpt-6-astra  gemini-3.1-pro-preview  gemini-3.6-flash  gemini-3.7-flash  gemini-3.8-flash  claude-fable-5  claude-opus-4-6  claude-opus-4-8  claude-opus-5  claude-sonnet-5  qwen3.8-max  glm-5.3  glm-5.3-flash  kimi-k3
+train     0.920         0.910        0.910          0.680        1.000                   1.530             0.970             0.860             0.880           0.940            0.880            1.250          0.700            0.710        1.020    0.930          1.110    0.960
+pool      0.870         0.740        0.850          0.630        0.940                   1.140             0.910             0.580             0.800           0.710            0.710            0.900          0.750            0.670        0.670    0.990          0.930    0.810
+corpus    2.590         1.610        1.770          2.060        1.420                   3.080             3.810             3.160             3.200           2.060            1.750            2.580          2.690            2.530        1.070    1.020          1.120    1.400
+
+======== 8. 도메인 분류기: 문체 27개로 train과 구별되는 정도 (AUC, 0.5면 구별 불가) ========
+train 대 pool: AUC 0.696 | pool 행 중 'train일 확률' 0.5 이상인 비율 0.362
+train 대 corpus: AUC 0.988 | corpus 행 중 'train일 확률' 0.5 이상인 비율 0.052
+train 대 pool (길이 피처 제외): AUC 0.693
+train 대 corpus (길이 피처 제외): AUC 0.986
+
+======== 9. 전이 점검: 한쪽 데이터만으로 학습해 train 2,699개 전체를 맞히는 BA (char_wb 2~4 TF-IDF + LinearSVC) ========
+corpus 전체: 24,025개로 학습 -> train BA 0.1200 | 회사 6개 단위 BA 0.2627
+Open Pool에서 라벨별로 corpus와 같은 개수: 24,025개로 학습 -> train BA 0.3375 | 회사 6개 단위 BA 0.5746
+corpus 중 한 문단·마크다운 없음·거절 아님: 831개로 학습 -> train BA 0.0581 | 회사 6개 단위 BA 0.1719
+Open Pool 표본 45,000개(노트북과 같은 표본): 45,000개로 학습 -> train BA 0.4112 | 회사 6개 단위 BA 0.5964
+라벨별 recall:
+                        corpus  pool(같은 개수)  corpus plain  pool 45k  corpus_n
+gpt-5.5                  0.013        0.293         0.000     0.373      1111
+gpt-5.6-luna             0.393        0.340         0.033     0.327      2285
+gpt-5.6-sol              0.367        0.467         0.000     0.327      3395
+gpt-5.6-terra            0.107        0.187         0.000     0.213      1544
+gpt-6-astra              0.047        0.540         0.000     0.653       723
+gemini-3.1-pro-preview   0.433        0.993         0.033     0.707      1141
+gemini-3.6-flash         0.000        0.020         0.000     0.507        83
+gemini-3.7-flash         0.000        0.020         0.000     0.433        77
+gemini-3.8-flash         0.000        0.027         0.000     0.493        71
+claude-fable-5           0.000        0.208         0.000     0.174      1148
+claude-opus-4-6          0.533        0.800         0.973     0.573      4911
+claude-opus-4-8          0.007        0.227         0.000     0.327      1428
+claude-opus-5            0.007        0.507         0.000     0.660       828
+claude-sonnet-5          0.053        0.527         0.007     0.533      1133
+qwen3.8-max              0.000        0.460         0.000     0.567       799
+glm-5.3                  0.000        0.107         0.000     0.193       603
+glm-5.3-flash            0.180        0.180         0.000     0.167      1056
+kimi-k3                  0.020        0.173         0.000     0.173      1689
+corpus 안 프롬프트 그룹 5-fold BA: 0.6925
