@@ -11,7 +11,7 @@
 | v5 제출 | **제출함** (2026-11-24). Public LB **0.550** (v4 full 0.545보다 +0.005) |
 | EXPERIMENTS.md | **"실험 5"로 기록함** (커밋 `ffad936`). 따로 파일을 만들지 않고 기존 [EXPERIMENTS.md](EXPERIMENTS.md)에 추가함 |
 | v6 | [name_that_llm_v6.ipynb](name_that_llm_v6.ipynb). v4 full + 블렌드 뒤 **회사 게이트**("5-1. 회사 게이트" 셀 하나, 문체 블록 없음). Kaggle 커널 `blkbeansoymilk/name-that-llm-v6-gate` **버전 1 완료**(2026-11-25, 32.5분, 새 풀 231,036개). **제출함**, Public LB **0.552**(v4 full 0.545보다 +0.007, v5 0.550보다 +0.002). 커널의 블렌드 OOF는 0.5719 → 0.5786이고, 새 풀 nested로는 +0.0044(95% 구간이 0을 포함)입니다. 옛 v4 OOF로 잰 nested는 0.5749 → 0.5864였습니다. **EXPERIMENTS.md 실험 6을 제출 결과로 갱신함** |
-| v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**(5장 블렌드 3분기, 5-1장 게이트 입력에 DeBERTa 추가). **한 번도 실행 안 함**(문법만 확인). Colab 세션, Kaggle 데이터셋, 커널 모두 없음 |
+| v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**(5장 블렌드 3분기, 5-1장 게이트 입력에 DeBERTa 추가). DeBERTa는 **Colab T4에서 학습함**(2026-11-25, 198분, OOF BA 0.5053). Kaggle 데이터셋 `blkbeansoymilk/ntl-deberta-v7`, 커널 `blkbeansoymilk/name-that-llm-v7-deberta` **버전 1 완료**(19.0분). **제출함**, Public LB **0.556**(v6 0.552보다 +0.004, v4 full 0.545보다 +0.011). 커널의 3분기 블렌드 OOF는 0.5868(같은 커널의 v6 가중치 0.5719, 가중치 nested로는 0.5827), 게이트 뒤 0.5882입니다. **EXPERIMENTS.md 실험 7에 기록함**. 진행 중인 Colab 세션이나 커널은 없습니다 |
 
 > [!NOTE]
 > v6과 v7은 다른 세션에서 만들어 이 커밋 전에 main에 올라온 것입니다. **v5는 v4에서 따로 갈라진 실험이라 v6·v7에는 문체 블록이 없습니다.** v5가 좋으면 v6·v7의 n-gram 셀에도 같은 블록을 넣을지 정해야 합니다. 회사 게이트의 `gate_alpha`와 문체 블록의 `stylo_alpha`는 이름만 비슷하고 서로 다른 값입니다.
@@ -131,6 +131,16 @@ v6 세션에서 받은 내용입니다. 재학습은 필요 없습니다. v4 노
 - 게이트는 OOF와 테스트 로짓만 있으면 되는 후처리입니다. v5나 v7 블렌드 위에도 같은 셀을 얹을 수 있으며, 그때는 alpha를 그 버전의 OOF로 다시 고릅니다.
 
 ### 4.4 v7: DeBERTa 분기
+
+> [!NOTE]
+> **2026-11-25 상태: 끝났습니다.** 아래 내용은 실행 전에 쓴 계획이고, 실제 결과는 [EXPERIMENTS.md](EXPERIMENTS.md) 실험 7과 [analysis_v7/](analysis_v7/)에 있습니다.
+> - **결과**: DeBERTa OOF BA 0.5053. `blend3`은 lora 0.6 / deb 0.2 / ng 0.2로 고정했습니다. 제출 커널의 블렌드 OOF는 0.5868(v6 가중치 0.5719, nested 0.5827), 게이트 뒤 0.5882, Public LB 0.556입니다.
+> - **Colab에서 알게 된 것**:
+>   - L4와 A100은 다섯 시간 동안 한 번도 배정되지 않았고 T4만 잡혔습니다. T4는 fp32로 돌고 `deb_grad_ckpt=True`가 필요합니다(없으면 마이크로 배치 8에서 OOM, 켜면 최대 8.1GB). Stage 1 123분, Stage 2 fold당 약 11.5분, 전체 198분입니다. bf16 경로(L4, A100)는 아직 실행해 보지 못했습니다.
+>   - 아래 `jupyter nbconvert --execute` 명령은 셀 출력을 로그로 내보내지 않습니다. `papermill <노트북> <출력> --log-output --request-save-on-cell-execute`로 실행하면 진행이 로그에 보입니다.
+>   - Colab CLI의 `upload`·`download`는 100MB쯤부터 실패합니다. 큰 파일은 40MB 조각으로 나눠 옮기고 md5를 확인합니다.
+>   - T4 VM이 실행 중에 두 번 서버 쪽에서 사라졌습니다(원인 미확인). 1분마다 세션 커널에 짧은 `colab exec`를 보내고, 결과 파일을 생기는 대로 서버로 받아 둡니다.
+>   - 그래서 Colab에서는 **DeBERTa만 학습하는 실행 사본**을 돌렸습니다([analysis_v7/colab/make_deb_run.py](analysis_v7/colab/make_deb_run.py). n-gram·LoRA 셀 제외, Stage 1 체크포인트, fold마다 OOF 저장, fold는 `analysis_v4/oof_v4.npz`에서 읽음). 블렌드 가중치는 서버에서 [analysis_v7/blend3_local.py](analysis_v7/blend3_local.py)로 고르고, 제출 커널이 전체를 다시 계산했습니다.
 
 v7 세션에서 받은 내용입니다. 노트북은 커밋 `4f2251a`에 있습니다. **코드 셀의 문법(`ast.parse`)만 확인했습니다.** DeBERTa의 학습, 저장, 추론 경로는 한 줄도 실행되지 않았습니다. Colab 세션, Kaggle 데이터셋, 커널도 만들지 않았습니다.
 
