@@ -1,0 +1,10 @@
+Tesla T4 (7, 5)
+bs=4 T=141 ckpt=False amp=None: peak 8.10GB, 0.607s/micro-batch, loss finite=True
+bs=4 T=351 ckpt=False amp=None: peak 11.31GB, 1.226s/micro-batch, loss finite=True
+bs=4 T=470 ckpt=False amp=None: peak 14.09GB, 1.821s/micro-batch, loss finite=True
+bs=4 T=512 ckpt=False amp=None: OOM (peak 14.37GB)
+bs=4 T=141 ckpt=True amp=None: peak 8.10GB, 0.769s/micro-batch, loss finite=True
+bs=4 T=512 ckpt=True amp=None: peak 8.11GB, 2.504s/micro-batch, loss finite=True
+bs=8 T=141 ckpt=False amp=None: peak 9.71GB, 1.012s/micro-batch, loss finite=True
+bs=8 T=512 ckpt=False amp=None: OOM (peak 14.36GB)
+bs=8 T=512 ckpt=True amp=None: peak 8.12GB, 4.826s/micro-batch, loss finite=True

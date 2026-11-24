@@ -1,0 +1,42 @@
+Input Notebook:  v7_deb.ipynb
+Output Notebook: /content/out/v7_deb_executed.ipynb
+Executing notebook with kernel: python3
+Open Pool: 115MB
+경고: /content/data에 LoRA fold 가중치가 없습니다. LoRA를 처음부터 학습합니다(수 시간).
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+device=cuda:0, base=None, LoRA 실행=False
+LoRA를 건너뜁니다. GPU와 Qwen3 입력을 확인하세요. n-gram만으로 제출 파일을 만듭니다.
+DeBERTa 폴더=/content/models/deberta-v3-large, 실행=True
+DeBERTa: /content/models/deberta-v3-large | 파라미터 434,030,610개 (전부 학습) | 연산 정밀도 torch.float32 | 풀링 mean
+[deb-stage1] 체크포인트 저장: 246/2813 스텝, loss 2.265 | 10.3분
+[deb-stage1] 체크포인트 저장: 486/2813 스텝, loss 2.028 | 20.7분
+[deb-stage1] 체크포인트 저장: 724/2813 스텝, loss 1.912 | 30.8분
+[deb-stage1] 체크포인트 저장: 957/2813 스텝, loss 1.834 | 41.2분
+[deb-stage1] 체크포인트 저장: 1192/2813 스텝, loss 1.769 | 51.6분
+[deb-stage1] 체크포인트 저장: 1426/2813 스텝, loss 1.655 | 61.9분
+[deb-stage1] 체크포인트 저장: 1661/2813 스텝, loss 1.645 | 72.4분
+[deb-stage1] 체크포인트 저장: 1896/2813 스텝, loss 1.568 | 82.6분
+[deb-stage1] 체크포인트 저장: 2128/2813 스텝, loss 1.580 | 92.8분
+[deb-stage1] 체크포인트 저장: 2368/2813 스텝, loss 1.551 | 103.2분
+[deb-stage1] 체크포인트 저장: 2601/2813 스텝, loss 1.496 | 113.5분
+[deb-stage1] 완료: 2813스텝, 비정상 손실로 건너뜀 0회, 122.6분
+DeBERTa Stage 1 fold 0 BA: 0.4981 | 124.0분
+[deb-stage2-fold0] 완료: 270스텝, 비정상 손실로 건너뜀 0회, 11.6분
+fold 0: DeBERTa BA 0.5000 | 136.0분
+[deb-stage2-fold1] 완료: 270스텝, 비정상 손실로 건너뜀 0회, 11.5분
+fold 1: DeBERTa BA 0.4889 | 147.9분
+[deb-stage2-fold2] 완료: 270스텝, 비정상 손실로 건너뜀 0회, 11.4분
+fold 2: DeBERTa BA 0.5185 | 159.7분
+[deb-stage2-fold3] 완료: 270스텝, 비정상 손실로 건너뜀 0회, 11.6분
+fold 3: DeBERTa BA 0.5305 | 171.6분
+[deb-stage2-fold4] 완료: 270스텝, 비정상 손실로 건너뜀 0회, 11.4분
+fold 4: DeBERTa BA 0.4889 | 183.4분
+[deb-stage2-full] 완료: 338스텝, 비정상 손실로 건너뜀 0회, 14.4분
+테스트 로짓: train 전체로 학습한 모델 1개
+DeBERTa OOF BA: 0.5053 (fold 0: 0.5000) | 198.3분
+DeBERTa 구간 GPU 메모리 최대 사용량: 8.1GB
+== DEB RUN DONE == 198.4분
