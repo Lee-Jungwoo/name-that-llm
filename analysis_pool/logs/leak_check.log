@@ -1,0 +1,76 @@
+train 2,699개 지문, 프롬프트 150개 | Open Pool 231,036개
+
+== 1. 풀이 밝힌 값 ==
+train prompt_id 예: ['p000', 'p001', 'p002'] | 풀 prompt_canon 예: ['p2e0a5d325c50', 'ped6c85cb454d', 'p6968945bba64', 'p99a519d39b4d']
+prompt_canon 첫 글자 분포: {'p': 184335, 's': 40775, '(없음)': 5926}
+train prompt_id와 글자 그대로 같은 prompt_canon: 0 행 | prompt_group 끝이 train prompt_id와 같은 행: 86
+flag_near_train_prompt: 0 | flag_train_prompt_regen: 0
+                         count   mean    std    min    50%    90%    99%  99.9%  max
+max_cos_train         231036.0  0.099  0.040  0.027  0.090  0.145  0.258  0.294  0.3
+max_sim_train_prompt  231036.0  0.098  0.054  0.015  0.084  0.158  0.318  0.382  0.4
+
+== 2. 독립 확인: 내용어 TF-IDF로 본 train 프롬프트와의 거리 ==
+train 지문 대 자기 프롬프트(자기 제외): {1: 0.184, 5: 0.262, 25: 0.372, 50: 0.441, 75: 0.509}
+train 지문 대 가장 가까운 다른 프롬프트: {50: 0.102, 95: 0.235, 99: 0.335, 99.9: 0.401, 100: 0.433}
+풀 지문 대 가장 가까운 train 프롬프트: {50: 0.084, 95: 0.207, 99: 0.318, 99.9: 0.384, 100: 0.432}
+기준: 같은 프롬프트 train 지문의 1% 분위 0.184, 5% 분위 0.262
+  코사인 >= 0.184 (1% 분위): 풀 15,553행 (0.0673) | train에서 다른 프롬프트인데 넘는 지문 307개 (0.1137)
+  코사인 >= 0.262 (5% 분위): 풀 5,773행 (0.0250) | train에서 다른 프롬프트인데 넘는 지문 87개 (0.0322)
+  코사인 >= 0.335 (다른 프롬프트 99% 분위): 풀 1,609행 (0.0070) | train에서 다른 프롬프트인데 넘는 지문 27개 (0.0100)
+풀이 밝힌 max_sim_train_prompt와 이 코사인의 Spearman: 0.995
+
+출처의 프롬프트 id가 train prompt_id와 같은 풀 지문 86개 (출처 {'bingli283/ntl-gen-pilot-v1': 86}, train 프롬프트 22개): 같은 번호의 train 프롬프트 중심과의 코사인 {0: 0.207, 25: 0.281, 50: 0.336, 75: 0.361, 100: 0.4} | 풀이 밝힌 max_sim_train_prompt {0: 0.21, 50: 0.339, 100: 0.395}
+  이 가운데 가장 가까운 train 프롬프트가 바로 그 번호인 행: 86개
+
+코사인 >= 0.184인 풀 지문 15,553개: 라벨별 {'gpt-5.5': 1031, 'gpt-5.6-luna': 1226, 'gpt-5.6-sol': 927, 'gpt-5.6-terra': 983, 'gpt-6-astra': 846, 'gemini-3.1-pro-preview': 603, 'gemini-3.6-flash': 1205, 'gemini-3.7-flash': 111, 'gemini-3.8-flash': 1271, 'claude-fable-5': 968, 'claude-opus-4-6': 917, 'claude-opus-4-8': 1023, 'claude-opus-5': 665, 'claude-sonnet-5': 1140, 'qwen3.8-max': 341, 'glm-5.3': 782, 'glm-5.3-flash': 803, 'kimi-k3': 711}
+  걸린 train 프롬프트 수: 150 | 프롬프트당 행 수 상위: {'p088': 636, 'p138': 461, 'p033': 454, 'p113': 446, 'p135': 379, 'p146': 376, 'p055': 372, 'p080': 348}
+  출처 상위: {'drjcfmd/ntl-generated-v2': 3150, 'kilupy/ntl-claude-family-passages': 1617, 'harshitkmr/ntl-google-gen-v1': 1282, 'trnhip/ntl-api-gen': 1004, 'elliotthankinson/ntl-exact-gens-v3': 877, 'darragh1walsh/ntl-kaggle-ai-gen-run-1': 749}
+  prompt_evidence: {'own_bank': 5466, 'own_text': 4929, 'id_only': 3019, 'other_text': 1265, 'none': 451, 'centroid': 423} | 서로 다른 prompt_canon 3979
+  가장 가까운 5개 (코사인, 라벨, 가까운 train 프롬프트, 출처):
+    0.432 gpt-5.6-luna p046 aswathvanan/ntl-proxy-passages
+    0.423 claude-sonnet-5 p046 parkjinsu1/ntl-kb-proxy-panels
+    0.423 claude-fable-5 p024 kilupy/ntl-claude-family-passages
+    0.421 claude-opus-4-6 p024 kilupy/ntl-claude-family-passages
+    0.421 claude-opus-4-6 p024 kilupy/ntl-claude-family-passages
+
+== 3. 표본 크기별 ==
+n=2500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.184인 풀 행의 비율(fold별) [0.017, 0.018, 0.012, 0.016, 0.021]
+n=2500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.100인 풀 행의 비율(fold별) [0.147, 0.133, 0.112, 0.105, 0.133]
+n=2500: 코사인 >= 0.184인 행의 라벨별 수 {'gpt-5.5': 179, 'gpt-5.6-luna': 191, 'gpt-5.6-sol': 167, 'gpt-5.6-terra': 166, 'gpt-6-astra': 195, 'gemini-3.1-pro-preview': 169, 'gemini-3.6-flash': 198, 'gemini-3.7-flash': 87, 'gemini-3.8-flash': 157, 'claude-fable-5': 185, 'claude-opus-4-6': 245, 'claude-opus-4-8': 215, 'claude-opus-5': 171, 'claude-sonnet-5': 214, 'qwen3.8-max': 203, 'glm-5.3': 184, 'glm-5.3-flash': 184, 'kimi-k3': 170}
+n=3500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.184인 풀 행의 비율(fold별) [0.018, 0.017, 0.012, 0.015, 0.02]
+n=3500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.100인 풀 행의 비율(fold별) [0.148, 0.131, 0.108, 0.104, 0.131]
+n=3500: 코사인 >= 0.184인 행의 라벨별 수 {'gpt-5.5': 285, 'gpt-5.6-luna': 284, 'gpt-5.6-sol': 245, 'gpt-5.6-terra': 228, 'gpt-6-astra': 272, 'gemini-3.1-pro-preview': 240, 'gemini-3.6-flash': 271, 'gemini-3.7-flash': 111, 'gemini-3.8-flash': 211, 'claude-fable-5': 256, 'claude-opus-4-6': 331, 'claude-opus-4-8': 295, 'claude-opus-5': 261, 'claude-sonnet-5': 315, 'qwen3.8-max': 273, 'glm-5.3': 246, 'glm-5.3-flash': 246, 'kimi-k3': 227}
+n=5000: fold의 검증 프롬프트 중 하나와 코사인 >= 0.184인 풀 행의 비율(fold별) [0.018, 0.017, 0.013, 0.016, 0.02]
+n=5000: fold의 검증 프롬프트 중 하나와 코사인 >= 0.100인 풀 행의 비율(fold별) [0.145, 0.128, 0.11, 0.104, 0.128]
+n=5000: 코사인 >= 0.184인 행의 라벨별 수 {'gpt-5.5': 360, 'gpt-5.6-luna': 374, 'gpt-5.6-sol': 350, 'gpt-5.6-terra': 350, 'gpt-6-astra': 380, 'gemini-3.1-pro-preview': 324, 'gemini-3.6-flash': 386, 'gemini-3.7-flash': 111, 'gemini-3.8-flash': 326, 'claude-fable-5': 393, 'claude-opus-4-6': 426, 'claude-opus-4-8': 434, 'claude-opus-5': 364, 'claude-sonnet-5': 462, 'qwen3.8-max': 341, 'glm-5.3': 349, 'glm-5.3-flash': 358, 'kimi-k3': 353}
+n=7500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.184인 풀 행의 비율(fold별) [0.018, 0.017, 0.013, 0.015, 0.02]
+n=7500: fold의 검증 프롬프트 중 하나와 코사인 >= 0.100인 풀 행의 비율(fold별) [0.142, 0.126, 0.109, 0.101, 0.126]
+n=7500: 코사인 >= 0.184인 행의 라벨별 수 {'gpt-5.5': 588, 'gpt-5.6-luna': 556, 'gpt-5.6-sol': 533, 'gpt-5.6-terra': 502, 'gpt-6-astra': 564, 'gemini-3.1-pro-preview': 458, 'gemini-3.6-flash': 575, 'gemini-3.7-flash': 111, 'gemini-3.8-flash': 428, 'claude-fable-5': 579, 'claude-opus-4-6': 661, 'claude-opus-4-8': 644, 'claude-opus-5': 519, 'claude-sonnet-5': 705, 'qwen3.8-max': 341, 'glm-5.3': 508, 'glm-5.3-flash': 500, 'kimi-k3': 506}
+n=10000: fold의 검증 프롬프트 중 하나와 코사인 >= 0.184인 풀 행의 비율(fold별) [0.017, 0.016, 0.013, 0.015, 0.019]
+n=10000: fold의 검증 프롬프트 중 하나와 코사인 >= 0.100인 풀 행의 비율(fold별) [0.138, 0.121, 0.106, 0.098, 0.122]
+n=10000: 코사인 >= 0.184인 행의 라벨별 수 {'gpt-5.5': 735, 'gpt-5.6-luna': 736, 'gpt-5.6-sol': 674, 'gpt-5.6-terra': 669, 'gpt-6-astra': 727, 'gemini-3.1-pro-preview': 586, 'gemini-3.6-flash': 733, 'gemini-3.7-flash': 111, 'gemini-3.8-flash': 565, 'claude-fable-5': 773, 'claude-opus-4-6': 849, 'claude-opus-4-8': 836, 'claude-opus-5': 665, 'claude-sonnet-5': 897, 'qwen3.8-max': 341, 'glm-5.3': 657, 'glm-5.3-flash': 660, 'kimi-k3': 671}
+라벨당                             2500     3500     5000     7500      10000
+행                               45000    63000    88107   128107    167987
+저장된 표본과 일치                       True     True     True     True      None
+코사인>=0.18 행                      3280     4597     6441     9278     11885
+비율                             0.0729   0.0730   0.0731   0.0724    0.0707
+코사인>=0.26 행                      1275     1778     2470     3541      4487
+그 비율                           0.0283   0.0282   0.0280   0.0276    0.0267
+train 프롬프트당 (τ1) 평균           21.8667  30.6467  42.9400  61.8533   79.2333
+걸린 프롬프트 수                         139      141      144      146       150
+출처 id가 train prompt_id와 같은 행       18       19       34       54        67
+코사인 평균                         0.1009   0.1008   0.1005   0.1001    0.0993
+코사인 99%                        0.3240   0.3241   0.3238   0.3240    0.3227
+max_sim_train_prompt 평균        0.1013   0.1011   0.1007   0.1003    0.0995
+max_cos_train 평균               0.1022   0.1021   0.1017   0.1014    0.1007
+가장 가까운 프롬프트 기준 프롬프트당 행       300.0000 420.0000 587.3800 854.0467 1119.9133
+그 최대                             1488     2141     2954     4248      5458
+
+전체 풀: 코사인 >= 0.184 비율 0.0673, >= 0.262 비율 0.0250
+
+== 4. 지문 단위: 풀 안에 '주제가 가까운 이웃'이 얼마나 있는가 (train 지문 대 공개된 test 지문 3개) ==
+train 지문 2,699개: 풀 지문과의 최대 코사인 {5: 0.138, 25: 0.186, 50: 0.233, 75: 0.272, 95: 0.301} | 코사인 >= 0.2인 풀 지문 수 {5: 0.0, 25: 0.0, 50: 3.0, 75: 12.0, 95: 50.1} | >= 0.3 {5: 0.0, 25: 0.0, 50: 0.0, 75: 0.0, 95: 1.0}
+test 지문 0: 최대 코사인 0.327 (train 분포에서 99% 분위), 코사인 >= 0.2인 풀 지문 4개 (53% 분위), >= 0.3 1개
+test 지문 1: 최대 코사인 0.493 (train 분포에서 100% 분위), 코사인 >= 0.2인 풀 지문 25개 (86% 분위), >= 0.3 4개
+test 지문 2: 최대 코사인 0.156 (train 분포에서 12% 분위), 코사인 >= 0.2인 풀 지문 0개 (0% 분위), >= 0.3 0개
+train 지문 대 다른 프롬프트의 train 지문: 최대 코사인 {5: 0.068, 25: 0.086, 50: 0.103, 75: 0.13, 95: 0.196}
