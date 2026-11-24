@@ -10,7 +10,7 @@
 | v5 Kaggle 커널 | `blkbeansoymilk/name-that-llm-v5-stylo` **버전 1 완료** (2026-11-24 22:18 KST쯤 푸시, 34.6분) |
 | v5 제출 | **제출함** (2026-11-24). Public LB **0.550** (v4 full 0.545보다 +0.005) |
 | EXPERIMENTS.md | **"실험 5"로 기록함** (커밋 `ffad936`). 따로 파일을 만들지 않고 기존 [EXPERIMENTS.md](EXPERIMENTS.md)에 추가함 |
-| v6 | [name_that_llm_v6.ipynb](name_that_llm_v6.ipynb). v4 + 블렌드 뒤 **회사 게이트**("5-1. 회사 게이트" 셀 하나). EXPERIMENTS.md 실험 6에 기록됨. 옛 v4 OOF로 잰 nested BA 0.5749 → 0.5864. **Kaggle 커널 없음, 미제출.** LoRA와 게이트를 함께 켠 실행은 아직 한 번도 안 함 |
+| v6 | [name_that_llm_v6.ipynb](name_that_llm_v6.ipynb). v4 full + 블렌드 뒤 **회사 게이트**("5-1. 회사 게이트" 셀 하나, 문체 블록 없음). Kaggle 커널 `blkbeansoymilk/name-that-llm-v6-gate` **버전 1 완료**(2026-11-25, 32.5분, 새 풀 231,036개). **제출함**, Public LB **0.552**(v4 full 0.545보다 +0.007, v5 0.550보다 +0.002). 커널의 블렌드 OOF는 0.5719 → 0.5786이고, 새 풀 nested로는 +0.0044(95% 구간이 0을 포함)입니다. 옛 v4 OOF로 잰 nested는 0.5749 → 0.5864였습니다. **EXPERIMENTS.md 실험 6을 제출 결과로 갱신함** |
 | v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**(5장 블렌드 3분기, 5-1장 게이트 입력에 DeBERTa 추가). **한 번도 실행 안 함**(문법만 확인). Colab 세션, Kaggle 데이터셋, 커널 모두 없음 |
 
 > [!NOTE]
@@ -83,6 +83,15 @@ kaggle competitions submissions -c name-that-llm | head
 - **풀 갱신 때문에 기준선이 바뀐 점**(3장)을 꼭 적습니다. v5의 효과는 새 풀 기준선(n-gram 0.4690, 블렌드 0.5716)과 비교한 값입니다.
 
 ### 4.3 v6: 회사 게이트 제출
+
+> [!NOTE]
+> **2026-11-25 상태: 아래 순서는 모두 끝났습니다.** 이 절의 나머지는 제출 전에 쓴 내용 그대로입니다.
+> - 커널 `name-that-llm-v6-gate` 버전 1(`lora_test="full"`, 32.5분)을 제출했고 Public LB는 **0.552**입니다(제출 ref 58845044).
+> - 커널 로그: 풀 231,036개, n-gram OOF 0.4693, LoRA OOF 0.5631, 블렌드(`w` = 0.6) 0.5719 → 게이트 0.5786(+0.0067, fold 5개 모두 오름).
+> - `gate_alpha`를 새 OOF로 다시 확인했습니다. nested 변화는 +0.0044(95% 구간 [−0.002, +0.011])로 옛 풀(+0.0115)의 절반쯤이고, 어떤 alpha를 써도 차이가 작아서 값은 그대로 뒀습니다.
+> - 새 풀 OOF와 로그는 [analysis_v6/newpool/](analysis_v6/newpool/)에 있습니다(`oof_v6.npz`, `kernel.log`, `gate2.log`, `check_gate.log`). 노트북의 게이트 셀 뒤 셀이 `oof_v6.npz`를 저장합니다.
+> - `gate2.py`와 `check_gate.py`는 OOF 경로를 세 번째 인자로 받습니다: `python analysis_v6/gate2.py . - analysis_v6/newpool/oof_v6.npz`. fold는 npz의 `fold`를 씁니다.
+> - 자세한 수치와 해석은 [EXPERIMENTS.md](EXPERIMENTS.md) 실험 6에 있습니다.
 
 v6 세션에서 받은 내용입니다. 재학습은 필요 없습니다. v4 노트북에 "5-1. 회사 게이트" 셀 하나만 더했고, LoRA는 저장된 가중치로 추론만 합니다.
 

@@ -1,0 +1,69 @@
+[{"stream_name":"stderr","time":5.3544614280000005,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":5.3544995,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":6.088616909,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.088643419,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.088653615,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.088656475,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":6.622916566,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.622958204,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.622962777,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.622966341,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":23.735730746,"data":"train (2699, 4), 프롬프트 150개, test (3, 2)\n"}
+,{"stream_name":"stdout","time":23.735771642,"data":"Open Pool: 231,036개 지문\n"}
+,{"stream_name":"stdout","time":23.735803411,"data":"프롬프트당 지문 수: {18: 149, 17: 1}\n"}
+,{"stream_name":"stdout","time":23.735808757,"data":"단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}\n"}
+,{"stream_name":"stdout","time":35.540589996,"data":"프롬프트 그룹 KFold BA: 0.3145\n"}
+,{"stream_name":"stdout","time":46.297137574,"data":"일반 KFold BA        : 0.1530\n"}
+,{"stream_name":"stdout","time":46.29718791,"data":"무작위 추측 BA       : 0.0556\n"}
+,{"stream_name":"stdout","time":153.069440439,"data":"특성 수: 463103 | 2.4분\n"}
+,{"stream_name":"stdout","time":519.514146656,"data":"train 가중치  1.0: OOF BA 0.4612 (fold별 [0.457, 0.472, 0.465, 0.487, 0.424]) | 8.5분\n"}
+,{"stream_name":"stdout","time":969.347498558,"data":"train 가중치  4.0: OOF BA 0.4671 (fold별 [0.474, 0.496, 0.463, 0.465, 0.437]) | 16.0분\n"}
+,{"stream_name":"stdout","time":1556.99282372,"data":"train 가중치 12.0: OOF BA 0.4693 (fold별 [0.465, 0.509, 0.467, 0.469, 0.437]) | 25.8분\n"}
+,{"stream_name":"stdout","time":1556.992862202,"data":"선택한 train 가중치: 12.0 -\u003e n-gram OOF BA: 0.4693\n"}
+,{"stream_name":"stdout","time":1679.39417979,"data":"device=cuda:0, base=/kaggle/input/models/qwen-lm/qwen-3/transformers/4b-base/1, LoRA 실행=True\n"}
+,{"stream_name":"stdout","time":1707.76736152,"data":"LoRA 층 72개, 학습 파라미터 6,256,658개, 깊이 [2, 4, 6, 9, 12, 15, 18]\n"}
+,{"stream_name":"stdout","time":1707.767393826,"data":"저장된 fold 가중치를 사용합니다: ['/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_fold0.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_fold1.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_fold2.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_fold3.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_fold4.pt']\n"}
+,{"stream_name":"stdout","time":1956.367258065,"data":"저장된 전체 학습 가중치를 사용합니다: /kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v4-echo-cv/ntl_lora_full.pt\n"}
+,{"stream_name":"stdout","time":1957.296860315,"data":"테스트 로짓: train 전체로 학습한 모델 1개\n"}
+,{"stream_name":"stdout","time":1957.296901325,"data":"LoRA OOF BA: 0.5631 (fold 0: 0.5426) | 32.5분\n"}
+,{"stream_name":"stdout","time":1957.602451332,"data":"n-gram 온도: 0.2\n"}
+,{"stream_name":"stdout","time":1957.602487427,"data":"LoRA 온도: 1\n"}
+,{"stream_name":"stdout","time":1957.602494066,"data":"LoRA 가중치별 OOF BA: {0.0: 0.4693, 0.1: 0.4986, 0.2: 0.5149, 0.3: 0.5368, 0.4: 0.5501, 0.5: 0.5645, 0.6: 0.5719, 0.7: 0.5753, 0.8: 0.5775, 0.9: 0.5731, 1.0: 0.5631}\n"}
+,{"stream_name":"stdout","time":1957.602499974,"data":"고정한 LoRA 가중치: 0.6 (OOF 최고는 0.8)\n"}
+,{"stream_name":"stdout","time":1957.60250466,"data":"최종 검증 BA (OOF, n=2699): 0.5719 | fold 0만 (v3과 비교용): 0.5537\n"}
+,{"stream_name":"stdout","time":1958.232149579,"data":"[gpt] 회사 안 정확도 v4 0.631, 특화 분류기 0.632 | alpha 0.75 사용, alpha별 OOF BA {0: 0.5719, 0.25: 0.5756, 0.5: 0.5753, 0.75: 0.576, 1.0: 0.5742}\n"}
+,{"stream_name":"stdout","time":1958.454506476,"data":"[gemini] 회사 안 정확도 v4 0.635, 특화 분류기 0.643 | alpha 0.25 사용, alpha별 OOF BA {0: 0.576, 0.25: 0.576, 0.5: 0.5775, 0.75: 0.5786, 1.0: 0.579}\n"}
+,{"stream_name":"stdout","time":1958.751418526,"data":"[claude] 회사 안 정확도 v4 0.732, 특화 분류기 0.724 | alpha 0.5 사용, alpha별 OOF BA {0: 0.576, 0.25: 0.5756, 0.5: 0.5756, 0.75: 0.5756, 1.0: 0.5753}\n"}
+,{"stream_name":"stdout","time":1958.751452475,"data":"[glm] 회사 안 정확도 v4 0.600, 특화 분류기 0.627 | alpha 1.0 사용, alpha별 OOF BA {0: 0.5756, 0.25: 0.5749, 0.5: 0.5767, 0.75: 0.5793, 1.0: 0.5786}\n"}
+,{"stream_name":"stdout","time":1958.751460075,"data":"블렌드 OOF BA: v4 0.5719 -\u003e 게이트 0.5786 | OOF에서 바뀐 지문 203개, 테스트에서 바뀐 지문 1개 / 3개\n"}
+,{"stream_name":"stdout","time":1958.898085627,"data":"oof_v6.npz 저장: 지문 2699개 (eval_lp는 게이트 전, gated_lp는 게이트 뒤)\n"}
+,{"stream_name":"stdout","time":1959.367454579,"data":"오답 중 같은 연구소 모델로 틀린 비율: 58.2%\n"}
+,{"stream_name":"stdout","time":1959.468970941,"data":"테스트 묶음 3개, 중심화 대상 지문 0개 / 3개\n"}
+,{"stream_name":"stdout","time":1959.560266767,"data":"[블렌드 OOF] n=2699, 균등이면 클래스당 150개\n"}
+,{"stream_name":"stdout","time":1959.560292741,"data":"  rho=0.0 : BA 0.5786 | 클래스별 예측 수 최소 94 / 최대 193\n"}
+,{"stream_name":"stdout","time":1959.560298756,"data":"  rho=0.35: BA 0.5782 | 클래스별 예측 수 최소 94 / 최대 191  \u003c- 사용\n"}
+,{"stream_name":"stdout","time":1959.560304409,"data":"  rho=0.7 : BA 0.5782 | 클래스별 예측 수 최소 99 / 최대 185\n"}
+,{"stream_name":"stdout","time":1959.56030875,"data":"  rho=1.0 : BA 0.5793 | 클래스별 예측 수 최소 99 / 최대 179\n"}
+,{"stream_name":"stdout","time":1959.5603132,"data":"[n-gram OOF] n=2699, 균등이면 클래스당 150개\n"}
+,{"stream_name":"stdout","time":1959.56031768,"data":"  rho=0.0 : BA 0.4693 | 클래스별 예측 수 최소 79 / 최대 248\n"}
+,{"stream_name":"stdout","time":1959.560321938,"data":"  rho=0.35: BA 0.4723 | 클래스별 예측 수 최소 85 / 최대 229  \u003c- 사용\n"}
+,{"stream_name":"stdout","time":1959.560326308,"data":"  rho=0.7 : BA 0.4742 | 클래스별 예측 수 최소 89 / 최대 204\n"}
+,{"stream_name":"stdout","time":1959.560330446,"data":"  rho=1.0 : BA 0.4734 | 클래스별 예측 수 최소 92 / 최대 183\n"}
+,{"stream_name":"stdout","time":1959.560346825,"data":"테스트 지문 3개 \u003c 200개라 테스트에는 적용하지 않습니다.\n"}
+,{"stream_name":"stdout","time":1959.61606854,"data":"model\n"}
+,{"stream_name":"stdout","time":1959.616093419,"data":"claude-sonnet-5           1\n"}
+,{"stream_name":"stdout","time":1959.616098413,"data":"gpt-5.6-terra             1\n"}
+,{"stream_name":"stdout","time":1959.616115041,"data":"gemini-3.1-pro-preview    1\n"}
+,{"stream_name":"stdout","time":1959.616120016,"data":"submission.parquet 저장 완료: (3, 2) | 총 32.5분\n"}
+,{"stream_name":"stderr","time":1965.180229841,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1965.180258768,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1965.333074986,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1965.33310045,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1966.136509745,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1966.23373127,"data":"[NbConvertApp] Writing 358688 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1968.808297385,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1969.581998995,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":1969.582056895,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":1969.582506268,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":1969.582845474,"data":"[NbConvertApp] Writing 569013 bytes to __results__.html\n"}
+]

@@ -1,0 +1,7 @@
+OOF: analysis_v6/newpool/oof_v6.npz
+[C=0.1 stack] 내부정확도 gpt 0.632, gemini 0.637, claude 0.724, glm 0.610
+C=0.1 stack            best-alpha 0.5805 (+0.0085) alpha=[0.75, 0.75, 0, 0.75] | nested 0.5775 (+0.0056)
+[C=1.0 stack] 내부정확도 gpt 0.632, gemini 0.643, claude 0.724, glm 0.627
+C=1.0 stack            best-alpha 0.5823 (+0.0104) alpha=[0.75, 1.0, 0.25, 0.75] | nested 0.5764 (+0.0044)
+(0.1, 'stack'): nested dBA 95% [-0.0011, +0.0126] | 바뀐 지문 162 (고침 56, 망침 41)
+(1.0, 'stack'): nested dBA 95% [-0.0019, +0.0111] | 바뀐 지문 193 (고침 66, 망침 54)
