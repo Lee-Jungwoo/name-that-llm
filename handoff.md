@@ -11,7 +11,7 @@
 | v5 제출 | **아직 안 함** |
 | EXPERIMENTS.md | **아직 v5 내용 없음.** 따로 파일을 만들지 않고 기존 [EXPERIMENTS.md](EXPERIMENTS.md)에 "실험 5"로 추가하기로 함 |
 | v6 | [name_that_llm_v6.ipynb](name_that_llm_v6.ipynb). v4 + 블렌드 뒤 **회사 게이트**("5-1. 회사 게이트" 셀 하나). EXPERIMENTS.md 실험 6에 기록됨. 옛 v4 OOF로 잰 nested BA 0.5749 → 0.5864. **Kaggle 커널 없음, 미제출.** LoRA와 게이트를 함께 켠 실행은 아직 한 번도 안 함 |
-| v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**. **아직 실행 안 함.** DeBERTa는 Colab L4에서 학습하고 결과를 Kaggle 데이터셋으로 올려 제출 커널에서는 추론만 함 |
+| v7 | [name_that_llm_v7.ipynb](name_that_llm_v7.ipynb). v6 + **DeBERTa-v3-large 세 번째 분기**(5장 블렌드 3분기, 5-1장 게이트 입력에 DeBERTa 추가). **한 번도 실행 안 함**(문법만 확인). Colab 세션, Kaggle 데이터셋, 커널 모두 없음 |
 
 > [!NOTE]
 > v6과 v7은 다른 세션에서 만들어 이 커밋 전에 main에 올라온 것입니다. **v5는 v4에서 따로 갈라진 실험이라 v6·v7에는 문체 블록이 없습니다.** v5가 좋으면 v6·v7의 n-gram 셀에도 같은 블록을 넣을지 정해야 합니다. 회사 게이트의 `gate_alpha`와 문체 블록의 `stylo_alpha`는 이름만 비슷하고 서로 다른 값입니다.
@@ -121,7 +121,70 @@ v6 세션에서 받은 내용입니다. 재학습은 필요 없습니다. v4 노
 
 ### 4.4 v7: DeBERTa 분기
 
-DeBERTa를 Colab L4에서 학습하고, 결과를 Kaggle 데이터셋으로 올린 뒤, 제출 커널에서는 추론만 합니다. 자세한 순서는 v7 노트북 머리말과 4-2장을 봅니다. **v7 세션에 상태를 물어봤고 답장을 기다리는 중입니다.** 받으면 이 절을 채웁니다.
+v7 세션에서 받은 내용입니다. 노트북은 커밋 `4f2251a`에 있습니다. **코드 셀의 문법(`ast.parse`)만 확인했습니다.** DeBERTa의 학습, 저장, 추론 경로는 한 줄도 실행되지 않았습니다. Colab 세션, Kaggle 데이터셋, 커널도 만들지 않았습니다.
+
+> [!IMPORTANT]
+> **v7 결과는 새 풀(231,036개) 기준입니다. v4(0.5749)나 v6 nested(0.5864) 같은 문서 수치와 직접 비교하지 마세요.** 둘 다 옛 풀 기준입니다.
+> - 공정한 비교 기준은 같은 실행 안에서 출력되는 `(v6 가중치 lora=0.6, deb=0.0, ng=0.4: OOF BA …)` 줄입니다. 새 풀로 만든 v6 블렌드에 해당합니다.
+> - 게이트도 같은 실행의 "블렌드 → 게이트" 출력으로 비교합니다.
+> - LoRA는 v4 가중치로 OOF만 다시 계산하므로 풀 변경의 영향을 받지 않습니다. n-gram과 DeBERTa Stage 1은 새 풀에서 표본을 뽑습니다.
+
+**1) Colab L4 입력 준비**
+- 대회 파일(`train.csv`, `test.csv`, `sample_submission.parquet`)을 `/content/data` 아래에 둡니다. `locate_competition_dir`가 `name-that-llm` 폴더나 `sample_submission.parquet`을 찾습니다.
+- LoRA v4 가중치(`ntl_lora_fold0~4.pt`, `ntl_lora_full.pt`)를 `/content/data/weights_v4/`에 둡니다. Kaggle 데이터셋 `ntl-lora-weights-v4-echo-cv`에 있습니다. **없으면 LoRA를 처음부터 학습해서 수 시간이 걸립니다.**
+- 노트북 cell 6이 Qwen3-4B-Base, `microsoft/deberta-v3-large`, Open Pool을 받고 `NTL_DEB_MODEL` 등 환경 변수를 설정합니다. n-gram 가중치 후보도 `[12.0]`만 쓰도록 덮어씁니다.
+
+**2) 짧은 통과 점검 (먼저 권장)**
+- `NTL_CFG`에 `"deb_stage1_budget_h": 0.02, "deb_stage2_budget_h": 0.02`를 추가합니다. 각 단계가 약 1분 만에 끊기고 끝까지 갑니다.
+- 끝나면 `/content/out`에 `ntl_deb_oof.npz`, `ntl_deb_full.pt`, `ntl_deb_base/`가 생기는지 확인합니다.
+
+**3) 본 실행**: 예산 덮어쓰기를 빼고 VM 안에서 `nohup`으로 돌립니다.
+
+```bash
+nohup jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1 name_that_llm_v7.ipynb \
+  --output /content/out/v7_executed.ipynb > /content/out/v7.log 2>&1 &
+```
+
+- cell 7(`drive.mount`)은 대화형 인증이라 비대화형 실행에서 멈출 수 있습니다. 미리 마운트하거나 그 셀을 건너뜁니다.
+- 마지막 셀이 `/content/out` 전체를 Drive의 `ntl/`로 복사합니다. DeBERTa 파일만 약 1.8GB이니 Drive 용량을 확인합니다.
+
+**4) 결과 파일 (`/content/out`)**
+
+| 파일 | 내용 | 제출에 필요 |
+|---|---|:-:|
+| `ntl_deb_oof.npz` | DeBERTa OOF 로짓 [2699, 18]과 id | ✅ |
+| `ntl_deb_full.pt` | train 전체로 Stage 2를 학습한 모델(fp16, 약 0.9GB) | ✅ |
+| `ntl_deb_base/` | 토크나이저와 config | ✅ |
+| `ntl_deb_stage1.pt` | Stage 1 가중치(약 0.9GB). 재실험 때 붙이면 Stage 1을 건너뜀 | |
+| `oof_v7.npz` | 세 분기의 OOF 로짓 | |
+| `submission.parquet` | Colab 실행의 제출 파일(테스트 3행) | |
+
+**5) Kaggle 데이터셋 만들기**: 제안 이름은 `ntl-deberta-v7`이고, 아직 정하지 않았습니다. 위 표에서 ✅인 세 개를 올립니다.
+
+**6) 제출 커널**: 제안 이름은 `name-that-llm-v7-deberta`입니다.
+- 입력: `name-that-llm`, `crtproduction/name-that-llm-open-pool`, `qwen-lm/qwen-3`(4b-base), `ntl-lora-weights-v4-echo-cv`, `ntl-deberta-v7`. GPU T4, Internet Off
+- 저장된 OOF가 입력에 있으면 DeBERTa는 테스트 추론만 합니다. T4에서는 fp32로 돕니다.
+- **제출 전에** Colab 로그의 "선택한 가중치"를 `CFG["blend3"] = dict(ng=…, lora=…, deb=…)`로 고정합니다. `None`이면 커널 안에서 OOF로 다시 고르는데, n-gram OOF가 실행마다 미세하게 다를 수 있습니다.
+- 커널의 n-gram 가중치 후보는 기본값 `[1, 4, 12]`라 약 27분이 걸립니다. 줄이려면 `[12.0]`으로 바꿉니다.
+- 제출은 4.1장과 같은 방식입니다.
+
+**7) 예상 시간 (측정값 없음, 추정)**
+
+| 단계 | 시간 |
+|---|---|
+| Stage 1 (Open Pool 45,000개, 1 epoch, L4) | 30~90분, 예산 상한 2.5시간 |
+| Stage 2 (fold 5개 + full) | 각 3~8분 |
+| LoRA OOF 재계산 + n-gram | 약 30분 |
+| Colab 합계 | 약 1.5~3시간 |
+| Kaggle 추론 | DeBERTa 약 4,000개에 수 분, 나머지는 v6과 같음 |
+
+**주의할 점**
+- **GPU 메모리(확인 안 함)**: 마이크로 배치 8 × 512토큰, bf16 autocast, fp32 가중치와 AdamW로 24GB 안에 들 것으로 봅니다(추정). OOM이 나면 `deb_grad_ckpt=True`로 하거나 `deb_batch_size=4`, `deb_grad_accum=4`로 바꿉니다.
+- **CPU RAM**: fold마다 Stage 1 가중치를 fp32로 CPU에 보관해 약 1.7GB를 씁니다.
+- **fp16은 쓰지 않습니다**: DeBERTa-v3에서 NaN 사례가 있어서입니다.
+- **토크나이저 패키지**: 첫 로드 때 토크나이저 변환에 `sentencepiece`와 `protobuf`가 필요합니다.
+- **`deb_test="folds"`**: Kaggle에서 쓰려면 학습 때 `deb_save_folds=True`로 fold 가중치 5개(약 4.5GB)를 저장해야 합니다. 기본값은 `"full"`입니다.
+- **낙관적인 점수**: 게이트 alpha는 v4 OOF에서 고른 값 그대로이고, 셀이 alpha별 OOF BA를 출력합니다. 블렌드 선택 점수도 같은 OOF로 골라 낙관적이니, 비교에는 셀이 함께 출력하는 nested BA를 씁니다.
 
 ### 4.5 v5와 합치기
 
