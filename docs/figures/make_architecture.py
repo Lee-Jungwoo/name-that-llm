@@ -1,6 +1,6 @@
 """docs/07_architecture_by_version.md의 버전별 구조 그림(arch_v1.png ~ arch_v8.png)을 그립니다.
 
-그림은 아래에서 위로 흐릅니다. 블록 색은 종류를 뜻하고(입력 · 특징 추출 · 풀링/연결 · 분류기 · 확률 · 결합 · 후처리 · 출력),
+그림은 위에서 아래로 흐릅니다(좌표는 아래에서 위로 쌓은 뒤 y축을 뒤집음). 블록 색은 종류를 뜻하고(입력 · 특징 추출 · 풀링/연결 · 분류기 · 확률 · 결합 · 후처리 · 출력),
 직전 버전(계보 기준) 대비 바뀐 블록은 빨간 테두리와 NEW 표시를 붙입니다. 데이터셋 관련 내용은 그림에 넣지 않습니다.
 
 사용: python docs/figures/make_architecture.py
@@ -36,7 +36,7 @@ COLORS = {
     "out": "#bfe6cd",   # 최종 출력 (초록)
 }
 EDGE, NEW = "#333333", "#e03131"
-BOX_W, COL_W, GAP, LINE_H, PAD = 3.3, 4.4, 0.42, 0.27, 0.3
+BOX_W, COL_W, GAP, LINE_H, PAD = 3.3, 4.8, 0.42, 0.27, 0.3
 SCALE = 0.9  # 데이터 1단위 = 0.9인치
 
 
@@ -50,7 +50,7 @@ def draw_box(ax, cx, y, text, kind, new=False, w=BOX_W, fs=10.5):
                                 fc=COLORS[kind], ec=NEW if new else EDGE, lw=2.6 if new else 1.2, zorder=3))
     ax.text(cx, y + h / 2, text, ha="center", va="center", fontsize=fs, zorder=4, linespacing=1.35)
     if new:
-        tag(ax, cx + w / 2 - 0.05, y + h - 0.02)
+        tag(ax, cx + w / 2 - 0.05, y + 0.02)  # y축을 뒤집으므로 화면에서는 상자 위쪽
     return h
 
 
@@ -69,12 +69,12 @@ def group(ax, x0, y0, x1, y1, label, dashed=False, new=False, label_pos="top"):
     ax.add_patch(FancyBboxPatch((x0, y0), x1 - x0, y1 - y0, boxstyle="round,pad=0,rounding_size=0.25",
                                 fc="#ffffff" if dashed else "#f0f0f0", ec=NEW if new else "#555555",
                                 lw=2.4 if new else 1.3, ls=(0, (4, 3)) if dashed else "-", zorder=1))
-    if label_pos == "top":
-        ax.text((x0 + x1) / 2, y1 - 0.25, label, ha="center", va="center", fontsize=11, fontweight="bold", zorder=4)
+    if label_pos == "top":  # 화면 위쪽(= y0) 왼편. 가운데는 들어오는 화살표 자리
+        ax.text(x0 + 0.18, y0 + 0.27, label, ha="left", va="center", fontsize=10.5, fontweight="bold", zorder=4)
     else:
         ax.text(x1 + 0.15, (y0 + y1) / 2, label, ha="left", va="center", fontsize=10, color="#555", zorder=4)
     if new:
-        tag(ax, x1 - 0.1, y1)
+        tag(ax, x1 - 0.1, y0)
 
 
 # ---- 분기 정의 ---------------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ def draw(version, spec):
     y_in = 0.35
     ax.text((xs[0] + xs[-1]) / 2, y_in, "입력: 영어 지문 1개", ha="center", va="center", fontsize=12)
 
-    # 분기: 아래에서 위로. 맨 위 '온도' 상자는 모든 분기가 같은 높이에 둡니다.
+    # 분기: 흐름 순서대로 y를 늘려 가며 쌓음. 맨 위 '온도' 상자는 모든 분기가 같은 높이에 둡니다.
     y_bus, y0 = y_in + 0.45, y_in + 0.85
     ax.plot([xs[0], xs[-1]], [y_bus, y_bus], color="#222", lw=1.4, zorder=2)
     ax.plot([(xs[0] + xs[-1]) / 2] * 2, [y_in + 0.2, y_bus], color="#222", lw=1.4, zorder=2)
@@ -167,14 +167,15 @@ def draw(version, spec):
         hs = [box_h(b["t"]) for b in br["boxes"]]
         stacks.append(sum(hs) + GAP * (len(hs) - 1))
     body = max(stacks)
-    y_temp = y0 + PAD + body + GAP + 0.1
-    y_top_group = y_temp + box_h(TEMP["t"]) + PAD + 0.45
+    TITLE = 0.45  # 분기 이름 자리
+    y_temp = y0 + PAD + TITLE + body + GAP + 0.1
+    y_top_group = y_temp + box_h(TEMP["t"]) + PAD
 
     tops = []
     for x, br, stack in zip(xs, branches, stacks):
         group(ax, x - COL_W / 2, y0, x + COL_W / 2, y_top_group, br["title"], new=br.get("new", False))
-        arrow(ax, x, y_bus, x, y0 + PAD)
-        y = y0 + PAD
+        arrow(ax, x, y_bus, x, y0 + PAD + TITLE)
+        y = y0 + PAD + TITLE
         n = len(br["boxes"])
         gap = GAP + (body - stack) / n  # 짧은 분기는 간격을 고르게 넓힘
         for i, b in enumerate(br["boxes"]):
@@ -186,7 +187,7 @@ def draw(version, spec):
                 sx = x - COL_W / 2 - 0.45 - BOX_W / 2
                 sh = box_h(s["t"])
                 draw_box(ax, sx, y + h / 2 - sh / 2, s["t"], s["k"], s.get("new", False))
-                ax.text((sx + BOX_W / 2 + x - BOX_W / 2) / 2, y + h / 2 - 0.08, "연결", ha="center", va="top", fontsize=8.5, color="#555")
+                ax.text((sx + BOX_W / 2 + x - BOX_W / 2) / 2, y + h / 2 + 0.1, "연결", ha="center", va="top", fontsize=8.5, color="#555")
                 arrow(ax, sx + BOX_W / 2, y + h / 2, x - BOX_W / 2, y + h / 2)
             y_next = y + h + gap
             if i < n - 1:
@@ -228,6 +229,7 @@ def draw(version, spec):
     total_h = y_end + 1.1
     ax.set_xlim(0, right + 0.4)
     ax.set_ylim(0, total_h)
+    ax.invert_yaxis()  # 위에서 아래로 흐르게
     ax.set_aspect("equal")
     ax.axis("off")
     fig.set_size_inches((right + 0.4) * SCALE, total_h * SCALE)
