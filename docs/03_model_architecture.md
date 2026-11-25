@@ -408,7 +408,7 @@ run_lora = CFG["use_lora"] and base_dir is not None and (device.type == "cuda" o
 
 ## 9. 버전마다 다른 점
 
-아래 항목은 일부 버전에만 있거나 버전마다 값이 다릅니다. 내용과 효과는 모두 [5. v1 → v7 변경과 개선 분석](05_version_history.md)에 있습니다.
+아래 항목은 일부 버전에만 있거나 버전마다 값이 다릅니다. 내용과 효과는 모두 [5. v1 → v7 변경과 개선 분석](05_version_history.md)에 있고, 버전별 구조 그림은 [7. 버전별 모델 구조 다이어그램](07_architecture_by_version.md)에 있습니다.
 
 - **외부 풀과 2단계 학습**: v1은 외부 풀 없이 train만으로 학습했습니다. v2부터 n-gram이 풀 표본을 함께 쓰고, LoRA는 풀로 Stage 1을 학습한 뒤 train으로 Stage 2를 학습합니다. (v1과 v2는 코드가 같고 커널에 붙인 입력이 다릅니다.)
 - **n-gram의 train 지문 가중치**: v1·v2는 1, v3부터는 후보 {1, 4, 12}를 OOF로 비교해 고릅니다.
