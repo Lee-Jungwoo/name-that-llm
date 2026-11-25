@@ -1,0 +1,76 @@
+예상 최대 메모리 8.5GB, MemAvailable 14.9GB
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+프롬프트 그룹 KFold BA: 0.3115
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+CFG: {'ngram_pool_per_label': 5000, 'ngram_pool_balance': True, 'ngram_train_weights': [12.0], 'stylo_alpha': 0.2, 'svc_c': 0.1, 'blend3': {'ng': 0.2, 'lora': 0.6, 'deb': 0.2}, 'gate_alpha': {'gpt': 0.75, 'gemini': 0.25, 'claude': 0.5, 'glm': 1.0}, 'center_strength': 0.5, 'sinkhorn_rho': 0.35}
+fold: 커널 분할(oof_v4.npz)로 바꿈. 로컬 StratifiedGroupKFold 분할과 같은가: False
+특성 수: 493279 | 5.4분
+문체 피처 27개, alpha=0.2 | 6.1분
+풀 표본 88,107행 (라벨당 최대 5,000개) | 라벨별 [5000, 5000, 5000, 5000, 5000, 5000, 5000, 3541, 5000, 5000, 5000, 5000, 5000, 5000, 4566, 5000, 5000, 5000]
+  5,000개에 못 미치는 라벨: {'gemini-3.7-flash': 3541, 'qwen3.8-max': 4566}
+풀 행 가중치 (라벨 균형 켬): 최소 0.9790 / 최대 1.3823 / 평균 1.0000 | 라벨별 가중치 합 최소 4,894.8 / 최대 4,894.8
+-- 벡터화까지 6.2분, 최대 메모리(RssAnon) 4.1GB
+-- 실험 캐시(cache_n5000)와 비트 단위로 같은가: {'y_pool': True, 'S_pool': True, 'S_train': True, 'X_pool.indptr': True, 'X_pool.indices': True, 'X_pool.data': True, 'X_train': True, 'w_pool': True}
+   풀 행렬 (88107, 493279), nnz 191,454,901, dtype float32/int32 | 풀 가중치 합 88107.000 (행 수 88,107)
+-- fold 0: 실험 OOF와 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 540 | BA 0.4796 (실험 0.4796) | liblinear 반복 31 | 4.4분, 최대 메모리 8.2GB, MemAvailable 최소 6.5GB
+-- fold 1: 실험 OOF와 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 540 | BA 0.5315 (실험 0.5315) | liblinear 반복 31 | 4.5분, 최대 메모리 8.2GB, MemAvailable 최소 6.3GB
+-- fold 2: 실험 OOF와 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 540 | BA 0.5130 (실험 0.5130) | liblinear 반복 30 | 4.2분, 최대 메모리 8.2GB, MemAvailable 최소 6.3GB
+-- fold 3: 실험 OOF와 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 539 | BA 0.5004 (실험 0.5004) | liblinear 반복 31 | 4.2분, 최대 메모리 8.2GB, MemAvailable 최소 6.3GB
+-- fold 4: 실험 OOF와 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 540 | BA 0.4815 (실험 0.4815) | liblinear 반복 30 | 4.3분, 최대 메모리 8.2GB, MemAvailable 최소 6.3GB
+train 가중치 12.0: OOF BA 0.5012 (fold별 [0.48, 0.531, 0.513, 0.5, 0.481]) | 27.8분
+선택한 train 가중치: 12.0 -> n-gram OOF BA: 0.5012
+-- train 전체 fit(테스트용): 4.4분, 최대 메모리 8.2GB
+n-gram 구간까지 프로세스 최대 메모리(RSS): 8.3GB | 32.2분
+-- 전체: n-gram OOF BA 0.5012 (실험 n5000_bal 0.5012) | 점수 최대 차이 0.00e+00, argmax가 다른 행 0 / 2699 | n-gram 구간 32.2분, 최대 메모리(RssAnon) 8.2GB
+
+== 5장 이후: 실제 test.csv 3행 (LoRA·DeBERTa 테스트 로짓은 자리 채움) ==
+  n-gram OOF BA 0.5012 | fold별 [0.4796, 0.5315, 0.513, 0.5004, 0.4815]
+    LoRA OOF BA 0.5631 | fold별 [0.5426, 0.5759, 0.5815, 0.5598, 0.5556]
+ DeBERTa OOF BA 0.5053 | fold별 [0.5, 0.4889, 0.5185, 0.5305, 0.4889]
+n-gram 온도: 0.2
+LoRA 온도: 1
+DeBERTa 온도: 1
+   ng 단독 OOF BA 0.5012 (fold 0: 0.4796)
+ lora 단독 OOF BA 0.5631 (fold 0: 0.5426)
+  deb 단독 OOF BA 0.5053 (fold 0: 0.5000)
+LoRA와 DeBERTa의 1순위가 다른 지문 41.5% | 정확도: LoRA 56.3%, DeBERTa 50.5%, 둘 중 하나라도 맞힘 66.5%
+  OOF BA 0.5997 | lora=0.4, deb=0.3, ng=0.3
+  OOF BA 0.5997 | lora=0.3, deb=0.3, ng=0.4
+  OOF BA 0.5982 | lora=0.6, deb=0.2, ng=0.2
+  OOF BA 0.5971 | lora=0.4, deb=0.2, ng=0.4
+  OOF BA 0.5968 | lora=0.6, deb=0.1, ng=0.3
+  (v6 가중치 lora=0.6, deb=0.0, ng=0.4: OOF BA 0.5905)
+고정한 가중치: ng=0.2, lora=0.6, deb=0.2
+최종 검증 BA (OOF, n=2699): 0.5982 | fold 0만 (v3과 비교용): 0.5611
+게이트 입력 분기: n-gram, LoRA, DeBERTa
+[gpt] 회사 안 정확도 블렌드 0.664, 특화 분류기 0.649 | alpha 0.75 사용, alpha별 OOF BA {0: 0.5982, 0.25: 0.6016, 0.5: 0.5979, 0.75: 0.596, 1.0: 0.5938}
+[gemini] 회사 안 정확도 블렌드 0.642, 특화 분류기 0.652 | alpha 0.25 사용, alpha별 OOF BA {0: 0.596, 0.25: 0.599, 0.5: 0.6008, 0.75: 0.5994, 1.0: 0.5982}
+[claude] 회사 안 정확도 블렌드 0.736, 특화 분류기 0.722 | alpha 0.5 사용, alpha별 OOF BA {0: 0.599, 0.25: 0.6012, 0.5: 0.6016, 0.75: 0.6005, 1.0: 0.5982}
+[glm] 회사 안 정확도 블렌드 0.637, 특화 분류기 0.630 | alpha 1.0 사용, alpha별 OOF BA {0: 0.6016, 0.25: 0.6016, 0.5: 0.6027, 0.75: 0.602, 1.0: 0.602}
+OOF BA: 블렌드 0.5982 -> 게이트 0.6020 | OOF에서 바뀐 지문 199개, 테스트에서 바뀐 지문 1개 / 3개
+오답 중 같은 연구소 모델로 틀린 비율: 60.1%
+테스트 묶음 3개, 중심화 대상 지문 0개 / 3개
+[블렌드 OOF] n=2699, 균등이면 클래스당 150개
+  rho=0.0 : BA 0.6020 | 클래스별 예측 수 최소 103 / 최대 185
+  rho=0.35: BA 0.6012 | 클래스별 예측 수 최소 104 / 최대 182  <- 사용
+  rho=0.7 : BA 0.6005 | 클래스별 예측 수 최소 105 / 최대 179
+  rho=1.0 : BA 0.6012 | 클래스별 예측 수 최소 105 / 최대 176
+[n-gram OOF] n=2699, 균등이면 클래스당 150개
+  rho=0.0 : BA 0.5012 | 클래스별 예측 수 최소 91 / 최대 230
+  rho=0.35: BA 0.5030 | 클래스별 예측 수 최소 100 / 최대 213  <- 사용
+  rho=0.7 : BA 0.5060 | 클래스별 예측 수 최소 107 / 최대 187
+  rho=1.0 : BA 0.5049 | 클래스별 예측 수 최소 112 / 최대 171
+테스트 지문 3개 < 200개라 테스트에는 적용하지 않습니다.
+model
+qwen3.8-max         1
+claude-sonnet-5     1
+gemini-3.6-flash    1
+submission.parquet 저장 완료: (3, 2) | 총 32.2분
+저장 확인: out/v8/local/oof_v8.npz 키 ['deb_logits', 'ids', 'lora_logits', 'ng_logits', 'y'], submission.parquet (3, 2)
+
+커널 fold로 다시 잰 프롬프트 그룹 KFold BA: 0.3145 (커널 로그 0.3145)
+총 32.5분, 최대 메모리(RssAnon) 8.2GB, MemAvailable 최소 6.3GB
