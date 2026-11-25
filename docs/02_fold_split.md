@@ -1,8 +1,8 @@
-# 2. 학습 fold와 검증 fold 분할 (v1~v7 공통)
+# 2. 학습 fold와 검증 fold 분할 (v1~v9 공통)
 
 [← 전체 문서](README.md)
 
-train 2,699개 지문을 **프롬프트(`prompt_id`) 150개 단위로 묶어 5개 fold**로 나눕니다. 한 프롬프트에 딸린 지문 18개는 항상 같은 fold에 들어가므로, 검증 fold의 프롬프트는 학습 때 한 번도 보지 못한 프롬프트입니다. 분할 코드는 v1~v7 노트북 7개에서 글자 하나 다르지 않고(`StratifiedGroupKFold`, 5-fold, seed 42), 모든 검증 수치(fold 0 홀드아웃 540개, OOF 2,699개)가 이 분할 위에서 나옵니다. 이 문서는 분할 방법, 용어, fold마다 학습에 들어가는 것과 빠지는 것, 누수와 환경 차이에 관한 주의점을 정리합니다.
+train 2,699개 지문을 **프롬프트(`prompt_id`) 150개 단위로 묶어 5개 fold**로 나눕니다. 한 프롬프트에 딸린 지문 18개는 항상 같은 fold에 들어가므로, 검증 fold의 프롬프트는 학습 때 한 번도 보지 못한 프롬프트입니다. 분할 코드는 v1~v9 노트북 9개에서 글자 하나 다르지 않고(`StratifiedGroupKFold`, 5-fold, seed 42), 모든 검증 수치(fold 0 홀드아웃 540개, OOF 2,699개)가 이 분할 위에서 나옵니다. 이 문서는 분할 방법, 용어, fold마다 학습에 들어가는 것과 빠지는 것, 누수와 환경 차이에 관한 주의점을 정리합니다.
 
 - 데이터 자체는 [01_datasets.md](01_datasets.md), 모델은 [03_model_architecture.md](03_model_architecture.md), 실험 절차는 [04_experiment_method.md](04_experiment_method.md), 버전별 변경은 [05_version_history.md](05_version_history.md)에 있습니다.
 
@@ -24,7 +24,7 @@ train은 프롬프트 150개에 18개 모델이 각각 답한 지문으로 이�
 
 ## 2. 분할 방법
 
-분할 코드는 노트북 "2. 검증" 장의 코드 셀 첫 줄입니다. v1~v7에서 이 셀 전체가 같습니다(셀 내용의 해시가 7개 모두 일치).
+분할 코드는 노트북 "2. 검증" 장의 코드 셀 첫 줄입니다. v1~v9에서 이 셀 전체가 같습니다(셀 내용의 해시가 9개 모두 일치).
 
 ```python
 CFG = dict(seed=42, n_folds=5, ...)
@@ -145,7 +145,11 @@ norm = lambda s: re.sub(r"\W+", " ", s.lower()).strip()
 pool = pool[~pool.text.map(norm).isin(set(train.text.map(norm)))].reset_index(drop=True)
 ```
 
-- 이 비교는 정규화한 텍스트가 **완전히 같은** 경우만 잡습니다. 조금 고친 지문이나 같은 프롬프트에 대한 다른 답은 남습니다. 풀에 train과 같은 프롬프트의 지문이 얼마나 있는지는 확인하지 않았습니다.
+- 이 비교는 정규화한 텍스트가 **완전히 같은** 경우만 잡습니다. 조금 고친 지문이나 같은 프롬프트에 대한 다른 답은 남습니다.
+- **주제가 가까운 풀 지문은 남아 있습니다.** v8 준비 때 따로 쟀습니다([analysis_pool/leak_check.py](../analysis_pool/leak_check.py), [EXPERIMENTS.md](../EXPERIMENTS.md) 실험 8의 "누수 통제").
+  - 내용어 TF-IDF로 train 프롬프트 150개의 중심을 만들면, 어느 train 프롬프트에 같은 프롬프트 train 지문의 1% 분위(코사인 0.184) 이상으로 가까운 풀 지문이 15,553개(6.7%)입니다. 출처의 프롬프트 id가 train `prompt_id`와 같은 지문도 86개 있습니다.
+  - fold마다 그 fold의 검증 프롬프트와 가까운 풀 행을 학습에서 빼고 다시 재면, n-gram OOF가 좁게 뺄 때 −0.003, 넓게 뺄 때(코사인 0.10 이상, 풀 행의 12~13%) −0.014 내려갑니다. 넓게 뺀 쪽에는 학습 행이 줄어든 효과도 섞여 있습니다.
+  - 그래서 **n-gram OOF의 절댓값은 처음 보는 주제 기준보다 최대 0.01쯤 높을 수 있습니다**(추정). 같은 풀을 쓰는 실행끼리의 **차이**는 가까운 행을 빼도 그대로였습니다(풀 표본 2,500 → 5,000의 차이가 세 조건에서 +0.025 ~ +0.028).
 - n-gram 분기의 온도는 모든 버전에서 OOF 2,699개 전체의 NLL로 고릅니다(`T_NG = best_temperature(oof_ng, y)`). 후보가 10개뿐인 값 하나라 영향은 작을 것으로 봅니다(추정).
 
 ## 6. fold 분할이 환경마다 다릅니다
@@ -187,7 +191,7 @@ cv_folds = [(np.where(v4["fold"] != k)[0], np.where(v4["fold"] == k)[0]) for k i
 분할 자체(`cv_folds`)는 모든 버전에서 같습니다. 달라지는 것은 분할을 쓰는 방식이며, 자세한 내용은 [05_version_history.md](05_version_history.md)에 있습니다.
 
 - **LoRA 분기가 쓰는 fold**: v1~v3는 fold 0만 빼고 한 번 학습해 홀드아웃 540개만 예측합니다. v4부터는 fold 5개를 모두 돌려 OOF 2,699개를 만듭니다.
-- **LoRA 온도와 블렌드 가중치를 고르는 데이터**: v1~v3는 홀드아웃 540개, v4부터는 OOF 2,699개입니다. 블렌드 가중치는 v3~v6에서 고르지 않고 0.6으로 고정하며(표만 출력), v7의 3분기 가중치는 기본 설정에서 OOF로 고릅니다.
+- **LoRA 온도와 블렌드 가중치를 고르는 데이터**: v1~v3는 홀드아웃 540개, v4부터는 OOF 2,699개입니다. 블렌드 가중치는 v3~v6에서 고르지 않고 0.6으로 고정하며(표만 출력), v7~v9의 3분기 가중치는 저장된 OOF로 로컬에서 골라 `blend3`에 고정합니다(`None`이면 커널 안에서 OOF로 고르고 nested BA를 출력).
 - **최종 검증 BA의 범위**: v1~v3는 홀드아웃, v4부터는 OOF입니다(fold 0만 따로 함께 출력).
 - **테스트 예측용 LoRA 모델**: v1~v3는 fold 0을 뺀 모델 그대로, v4부터는 fold 모델 5개 평균(`folds`) 또는 train 전체로 학습한 모델(`full`)입니다.
 - **Open Pool 사용 여부**: v1은 풀 없이 실행해 TF-IDF를 train 전체에 맞췄고, v2부터는 풀 표본에 맞춥니다.
@@ -195,4 +199,6 @@ cv_folds = [(np.where(v4["fold"] != k)[0], np.where(v4["fold"] == k)[0]) for k i
 - **문체 피처의 표준화**: v5는 문체 피처 27개의 평균·표준편차를 fold마다 학습 fold의 train 지문으로만 구합니다.
 - **회사 게이트**: v6·v7은 회사별 분류기도 같은 `cv_folds`로 fold 밖에서 학습해 OOF를 만듭니다.
 - **DeBERTa 분기와 3분기 블렌드**: v7은 DeBERTa도 같은 `cv_folds`로 5-fold OOF를 만들고, 블렌드 가중치의 nested BA를 함께 출력합니다.
-- **OOF 저장**: v6은 실행한 환경의 `fold`를 OOF와 함께 `oof_v6.npz`로 저장합니다. v7의 `oof_v7.npz`에는 분기별 OOF 로짓과 지문 id만 있고 `fold`는 없습니다.
+- **OOF 저장**: v6은 실행한 환경의 `fold`를 OOF와 함께 `oof_v6.npz`로 저장합니다. v7·v8의 `oof_v7.npz`, `oof_v8.npz`에는 분기별 OOF 로짓과 지문 id만 있고 `fold`는 없습니다. v9는 LoRA OOF를 LoRA 셀 끝에서 `ntl_lora_v9_oof.npz`로 따로 저장합니다.
+- **풀 표본 크기**: v8은 n-gram 풀 표본을 라벨당 5,000개로 늘렸습니다. 풀은 fold와 무관하게 전부 들어가는 규칙은 같습니다.
+- **train 프롬프트와 겹치는 풀 행**: v9는 LoRA Stage 1에서 출처의 프롬프트 id가 train `prompt_id`와 같은 풀 행 86개를 뺍니다. n-gram 분기에서는 빼지 않습니다.

@@ -1,8 +1,8 @@
-"""회사(기업) 내부 혼동 행렬을 v4와 v7에 대해 같은 기준(OOF 2,699개)으로 다시 그립니다.
+"""회사(기업) 내부 혼동 행렬을 v4, v7, v8에 대해 같은 기준(OOF 2,699개)으로 다시 그립니다.
 
   v4 예측: analysis_v4/oof_v4.npz 의 eval_lp (n-gram + LoRA 블렌드, w = 0.6)
-  v7 예측: analysis_v7/oof_v7.npz (제출 커널이 저장한 세 분기의 OOF 로짓)에 v7 노트북의
-           5장(3분기 블렌드)과 5-1장(회사 게이트) 셀을 그대로 실행한 결과
+  v7·v8 예측: analysis_v7/oof_v7.npz, analysis_v8/oof_v8.npz (제출 커널이 저장한 세 분기의 OOF 로짓)에
+           그 버전 노트북의 5장(3분기 블렌드)과 5-1장(회사 게이트) 셀을 그대로 실행한 결과
 둘 다 Sinkhorn을 적용하기 전의 argmax입니다. fold는 oof_v4.npz의 fold(= 제출 커널의 분할)를 씁니다.
 
 사용: python analysis_confusion/plot_confusion.py    # 그림은 analysis_confusion/figures/, 수치는 표준 출력
@@ -40,13 +40,13 @@ def v4_pred():
     return d["y"], d["fold"], d["eval_lp"].argmax(1), [str(l) for l in d["labels"]]
 
 
-def v7_pred(y, fold, labels):
-    """v7 노트북의 블렌드 셀과 게이트 셀을 저장된 OOF 로짓으로 실행해 (블렌드 예측, 게이트 뒤 예측)을 돌려줍니다."""
+def nb_pred(v, y, fold, labels):
+    """v7·v8 노트북의 블렌드 셀과 게이트 셀을 저장된 OOF 로짓으로 실행해 (블렌드 예측, 게이트 뒤 예측)을 돌려줍니다."""
     import pandas as pd
-    d = np.load(ROOT / "analysis_v7/oof_v7.npz", allow_pickle=True)
-    assert (d["y"] == y).all(), "oof_v7.npz의 지문 순서가 oof_v4.npz와 다릅니다."
+    d = np.load(ROOT / f"analysis_v{v}/oof_v{v}.npz", allow_pickle=True)
+    assert (d["y"] == y).all(), f"oof_v{v}.npz의 지문 순서가 oof_v4.npz와 다릅니다."
     os.environ.update(NTL_WORK=tempfile.mkdtemp(), NTL_CFG="{}", MPLBACKEND="Agg")
-    nb = json.load(open(ROOT / "name_that_llm_v7.ipynb"))
+    nb = json.load(open(ROOT / f"name_that_llm_v{v}.ipynb"))
     code = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
     find = lambda key: next(s for s in code if key in s)
     g = {}
@@ -130,15 +130,19 @@ def report(name, y, p, labels):
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     y, fold, p4, labels = v4_pred()
-    p7_blend, p7 = v7_pred(y, fold, labels)
+    p7_blend, p7 = nb_pred(7, y, fold, labels)
     print(f"\nv7 재현 확인: 블렌드 OOF BA {balanced_accuracy_score(y, p7_blend):.4f} -> 게이트 {balanced_accuracy_score(y, p7):.4f} "
           "(제출 커널 로그: 0.5868 -> 0.5882)")
-    preds = [("v4 · n-gram + LoRA", p4), ("v7 · 3분기 블렌드 + 회사 게이트", p7)]
+    p8_blend, p8 = nb_pred(8, y, fold, labels)
+    print(f"v8 재현 확인: 블렌드 OOF BA {balanced_accuracy_score(y, p8_blend):.4f} -> 게이트 {balanced_accuracy_score(y, p8):.4f} "
+          "(제출 커널 로그: 0.5982 -> 0.6023)")
+    preds = [("v4 · n-gram + LoRA", p4), ("v7 · + DeBERTa, 회사 게이트", p7), ("v8 · + n-gram 풀 5,000, 문체", p8)]
     for org, prefix in MULTI:
         plot_org(y, preds, labels, org, prefix, OUT / f"cm_{prefix}.png")
         print("저장:", (OUT / f"cm_{prefix}.png").relative_to(ROOT))
     report("v4", y, p4, labels)
     report("v7", y, p7, labels)
+    report("v8", y, p8, labels)
     for org, prefix in MULTI:
         for name, p in preds:
             cm, short = org_matrix(y, p, labels, prefix)

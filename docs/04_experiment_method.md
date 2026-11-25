@@ -1,8 +1,8 @@
-# 4. 실험 방법 (v1~v7 공통)
+# 4. 실험 방법 (v1~v9 공통)
 
 [← 전체 문서](README.md)
 
-이 문서는 실험 하나를 어떤 절차로 돌리고, 무엇으로 재고, 어떻게 비교·기록·제출했는지를 정리합니다. v1부터 v7까지 노트북 7개에 공통으로 들어 있는 방법만 본문에 적었습니다. 요약하면 **노트북 하나가 버전 하나**이고, 학습은 Colab GPU에서, 제출은 저장한 가중치를 Kaggle 커널(T4, Internet Off)에 붙여 추론만 하는 방식입니다. 검증은 프롬프트 단위 5-fold이고, 문서에 적는 검증 수치는 LB 점수를 낸 제출 커널의 로그에서 가져옵니다.
+이 문서는 실험 하나를 어떤 절차로 돌리고, 무엇으로 재고, 어떻게 비교·기록·제출했는지를 정리합니다. v1부터 v9까지 노트북 9개에 공통으로 들어 있는 방법만 본문에 적었습니다. 요약하면 **노트북 하나가 버전 하나**이고, 학습은 Colab GPU에서, 제출은 저장한 가중치를 Kaggle 커널(T4, Internet Off)에 붙여 추론만 하는 방식입니다. 검증은 프롬프트 단위 5-fold이고, 문서에 적는 검증 수치는 LB 점수를 낸 제출 커널의 로그에서 가져옵니다.
 
 데이터는 [01_datasets.md](01_datasets.md), fold 분할은 [02_fold_split.md](02_fold_split.md), 모델 구조는 [03_model_architecture.md](03_model_architecture.md), 버전별 변경과 효과는 [05_version_history.md](05_version_history.md)에 있습니다.
 
@@ -61,12 +61,12 @@ flowchart TD
 | 환경 | 하는 일 | GPU, 정밀도 |
 |---|---|---|
 | 로컬 서버 (CPU) | n-gram 분기만 실행, 저장된 OOF로 블렌드·후처리 비교, 분석 스크립트 | 없음 |
-| Colab | LoRA 학습. 결과 가중치를 `/content/out`에 저장 | 주로 L4 (bf16) |
+| Colab | 신경망 분기(LoRA, DeBERTa) 학습. 결과 가중치를 `/content/out`에 저장 | v4까지 주로 L4 (bf16). v7부터는 L4가 배정되지 않아 T4 |
 | Kaggle 커널 | 저장된 가중치로 추론만 하고 제출 파일 생성 | T4 (fp16) |
 
 ### 정밀도 차이
 
-노트북의 `build_classifier`는 GPU의 compute capability를 보고 정밀도를 고릅니다. 7개 노트북 모두 같은 줄입니다.
+노트북의 `build_classifier`는 GPU의 compute capability를 보고 정밀도를 고릅니다. 9개 노트북 모두 같은 줄입니다.
 
 ```python
 # T4(compute capability 7.5)는 bf16 연산이 에뮬레이션이라 느리므로 fp16을 씁니다.
@@ -83,22 +83,23 @@ weights = torch.bfloat16 if torch.cuda.get_device_capability(0)[0] >= 8 else tor
 |---|---|---|---|
 | LoRA Stage 1 (Open Pool 45,000개, 1 epoch) | Colab L4 | 31분 | EXPERIMENTS.md 실험 1 |
 | LoRA Stage 2 (train, 2 epochs) | Colab L4 | 3분 | EXPERIMENTS.md 실험 1 |
-| 제출 커널 전체 (추론만) | Kaggle T4 | 34.6분 | v5 커널 로그 |
+| 제출 커널 전체 (추론만) | Kaggle T4 | 34.6분 (v5), 32.5분 (v6), 19.0분 (v7), 33.9분 (v8) | 각 버전의 커널 로그, [EXPERIMENTS.md](../EXPERIMENTS.md) 실험 5~8 |
+| DeBERTa 학습 (Stage 1 + Stage 2 fold 5개 + 전체) | Colab T4, fp32 | 198.4분 | EXPERIMENTS.md 실험 7 |
 | n-gram 5-fold 한 번 (TF-IDF 맞추기 포함) | 로컬 CPU | 약 15분 | [v5_stylo/alpha_sweep_run.log](../v5_stylo/alpha_sweep_run.log) |
 
-제출 커널의 시간 대부분은 GPU 추론이 아니라 CPU에서 도는 n-gram 5-fold입니다. v5 커널 로그에서 n-gram이 약 28분, LoRA 추론이 약 4분입니다.
+제출 커널의 시간 대부분은 GPU 추론이 아니라 CPU에서 도는 n-gram 5-fold입니다. v5 커널 로그에서 n-gram이 약 28분, LoRA 추론이 약 4분입니다. v7은 n-gram train 가중치 후보를 12 하나로 줄여 n-gram 구간이 12.2분이었고, v8은 풀 표본을 두 배로 늘려 28.5분이 됐습니다.
 
 ## 4. 설정 체계
 
 ### 노트북 하나가 버전 하나
 
-- `name_that_llm_v1.ipynb` ~ `name_that_llm_v7.ipynb`가 각각 한 버전입니다. 새 버전은 앞 버전 노트북을 복사해 필요한 셀만 고칩니다.
+- `name_that_llm_v1.ipynb` ~ `name_that_llm_v9.ipynb`가 각각 한 버전입니다. 새 버전은 앞 버전 노트북을 복사해 필요한 셀만 고칩니다. v8부터는 손으로 고치지 않고 변환 스크립트로 만듭니다([analysis_v8/make_v8.py](../analysis_v8/make_v8.py), [analysis_v9/make_v9.py](../analysis_v9/make_v9.py)). v5도 같은 방식이었습니다([v5_stylo/make_v5.py](../v5_stylo/make_v5.py)).
 - 첫 마크다운 셀에 그 버전이 무엇을 바꿨는지 적습니다.
-- 노트북의 장 구성은 7개 모두 같습니다: 데이터 → 검증 → n-gram 모델 → LoRA 분류기 → 블렌딩 → 프롬프트 중심화 → 제출 파일. 뒤 버전은 이 사이에 장을 끼워 넣습니다.
+- 노트북의 장 구성은 9개 모두 같습니다: 데이터 → 검증 → n-gram 모델 → LoRA 분류기 → 블렌딩 → 프롬프트 중심화 → 제출 파일. 뒤 버전은 이 사이에 장을 끼워 넣습니다.
 
 ### `CFG` 딕셔너리
 
-하이퍼파라미터는 설정 셀의 `CFG` 딕셔너리 하나에 모여 있습니다. 새 기능은 `CFG`에 켜고 끄는 키를 추가하는 방식으로 넣어서, 값을 바꾸면 앞 버전과 같은 동작으로 되돌릴 수 있습니다. 실험 운영과 관련된 공통 키는 다음과 같습니다(7개 노트북 모두에 있음).
+하이퍼파라미터는 설정 셀의 `CFG` 딕셔너리 하나에 모여 있습니다. 새 기능은 `CFG`에 켜고 끄는 키를 추가하는 방식으로 넣어서, 값을 바꾸면 앞 버전과 같은 동작으로 되돌릴 수 있습니다. 실험 운영과 관련된 공통 키는 다음과 같습니다(9개 노트북 모두에 있음).
 
 | 키 | 기본값 | 의미 |
 |---|:-:|---|
@@ -106,14 +107,14 @@ weights = torch.bfloat16 if torch.cuda.get_device_capability(0)[0] >= 8 else tor
 | `n_folds` | 5 | 프롬프트 단위 fold 수 |
 | `use_lora` | `True` | `False`면 LoRA 분기를 건너뛰고 n-gram만 실행 |
 | `force_lora` | `False` | GPU가 없어도 LoRA를 실행(동작 점검용) |
-| `stage1_budget_h`, `stage2_budget_h` | 3.0, 1.0 | 학습 단계별 시간 예산. 넘으면 그 스텝에서 학습을 멈추고 다음으로 넘어감 |
+| `stage1_budget_h`, `stage2_budget_h` | 3.0, 1.0 | 학습 단계별 시간 예산. 넘으면 그 스텝에서 학습을 멈추고 다음으로 넘어감. v9는 Stage 1이 풀 전체라 14.0 |
 | `use_centering` | `True` | 프롬프트 중심화 후처리 사용 여부 |
 
 모델 쪽 하이퍼파라미터는 [03_model_architecture.md](03_model_architecture.md)에 있습니다.
 
 ### 환경 변수
 
-경로와 설정 덮어쓰기는 환경 변수 4개로 합니다. 7개 노트북 모두 같은 이름을 씁니다.
+경로와 설정 덮어쓰기는 환경 변수 4개로 합니다. 9개 노트북 모두 같은 이름을 씁니다.
 
 | 변수 | 의미 | 기본값 |
 |---|---|---|
@@ -179,7 +180,7 @@ def best_temperature(scores, labels, grid=(0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.
     return grid[int(np.argmin(nll))]
 ```
 
-- 후보 10개 중 **검증 예측의 NLL이 가장 낮은 값**을 고릅니다. 7개 노트북 모두 같은 함수와 같은 후보를 씁니다.
+- 후보 10개 중 **검증 예측의 NLL이 가장 낮은 값**을 고릅니다. 9개 노트북 모두 같은 함수와 같은 후보를 씁니다.
 - n-gram 온도는 OOF 2,699개로 고릅니다. LoRA 온도는 LoRA의 검증 예측으로 고릅니다.
 - 고른 온도는 테스트 예측에 그대로 적용합니다.
 
@@ -258,12 +259,16 @@ def best_temperature(scores, labels, grid=(0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.
 | v2 → v3 | 블렌드 홀드아웃 −0.0055 | +0.029 |
 | v4 folds 대 full | OOF 수치 같음 | 0.002 차이 |
 | v4 full → v5 | 블렌드 OOF 0.5749 → 0.5734 (풀이 다름) | +0.005 |
+| v6 → v7 | 게이트 뒤 OOF +0.0096 | +0.004 |
+| v7 → v8 | 게이트 뒤 OOF +0.0141 | +0.007 |
 
 여기서 얻은 판단 기준은 다음과 같습니다.
 
 - **540개 홀드아웃으로는 블렌드 가중치 같은 값을 고르지 않습니다.** `w`별 BA가 0.53~0.55 사이에서 들쭉날쭉했습니다. 2,699개 OOF로 보면 훨씬 매끄럽습니다.
 - **OOF 0.002~0.003 차이로는 LB의 방향을 맞히지 못합니다.**
 - **LB 0.002 차이는 우열이 아닙니다.** 검증 수치가 같은 두 제출이 그만큼 달랐습니다.
+- **OOF 차이의 절반쯤을 LB 기대치로 잡습니다.** v7과 v8에서 LB 오름폭이 OOF 오름폭의 절반이었고, 가중치를 fold 밖에서 고른 nested 차이가 LB에 더 가까웠습니다. 두 번의 관찰에서 나온 경험칙입니다(v8에서 정립).
+- **OOF 절댓값을 LB 예상치로 읽지 않습니다.** 게이트 뒤 OOF와 Public LB의 간격이 v6 0.027, v7 0.032, v8 0.039로 벌어졌습니다. OOF를 보고 정한 값이 쌓인 것과, 풀에 train 프롬프트와 주제가 가까운 지문이 있는 것이 후보입니다(추정, [02_fold_split.md](02_fold_split.md) 5장).
 - 그래서 채택 여부는 한 숫자가 아니라 여러 근거로 정합니다: 다른 fold 분할에서도 같은 방향인지, bootstrap 구간이 0을 벗어나는지, fold 5개에서 모두 오르는지, 블렌드에서 손해가 없는지.
 
 ## 8. 제출 절차
@@ -306,7 +311,7 @@ kaggle competitions submissions -c name-that-llm
 
 ### 제출 전에 로그에서 확인할 줄
 
-7개 노트북 모두가 출력하는 줄입니다.
+9개 노트북 모두가 출력하는 줄입니다.
 
 | 로그 줄 | 확인할 것 |
 |---|---|
@@ -393,15 +398,17 @@ NTL_INPUT=./data NTL_CFG='{"use_lora": false}' \
 아래는 버전에 따라 달라진 절차입니다. 자세한 내용은 [05_version_history.md](05_version_history.md)에 있습니다.
 
 - **LoRA 검증 범위**: v1~v3는 fold 0 홀드아웃 540개로 재고, v4부터는 5-fold OOF 2,699개로 잽니다. LoRA 온도와 블렌드 표도 같은 범위를 따릅니다.
-- **블렌드 가중치 선택**: v1·v2는 홀드아웃 최고값을 쓰고, v3부터는 고정값을 씁니다. v7은 3분기 조합을 OOF로 고르고 nested 점수를 함께 출력합니다.
+- **블렌드 가중치 선택**: v1·v2는 홀드아웃 최고값을 쓰고, v3부터는 고정값을 씁니다. v7부터는 3분기 조합을 저장된 OOF로 로컬에서 고르고 nested 점수를 확인한 뒤 고정합니다.
 - **n-gram train 가중치**: v3부터 후보를 OOF로 비교해 고릅니다.
 - **Open Pool 사용**: v1은 풀 없이 train만으로 학습했고, Colab 설정(`NTL_CFG`)도 그에 맞춰 다릅니다.
 - **풀 갱신과 기준선 재측정**: 풀 크기가 버전 사이에 바뀌었고, v5에서는 새 풀과 커널 fold로 기준선을 로컬에서 다시 쟀습니다.
-- **가중치 파일 구성**: v1~v3는 `ntl_lora.pt` 하나, v4부터는 fold별 파일 5개와 전체 학습 파일입니다. v7은 DeBERTa 가중치와 OOF 파일이 추가됩니다.
+- **가중치 파일 구성**: v1~v3는 `ntl_lora.pt` 하나, v4부터는 fold별 파일 5개와 전체 학습 파일입니다. v7은 DeBERTa 가중치와 OOF 파일이 추가됩니다. v9는 LoRA 파일 이름이 `ntl_lora_v9_*.pt`로 바뀌고, 저장된 가중치의 `lora_pool_mode`가 다르면 멈춥니다(v4 가중치를 잘못 불러오지 않게).
 - **테스트 예측 방식**: v4부터 fold 모델 평균과 전체 학습 모델 중에서 고릅니다.
-- **학습 중단 후 이어 학습**: v4의 Stage 1은 T4에서 시작해 L4로 옮겨 이어 학습했습니다.
+- **학습 중단 후 이어 학습**: v4의 Stage 1은 T4에서 시작해 L4로 옮겨 이어 학습했습니다. v7부터는 Colab VM이 실행 중에 회수되는 일이 잦아, 새로 학습하는 분기만 돌리는 실행 사본을 만들고 10분마다 체크포인트를 서버로 받아 둡니다([analysis_v7/colab/](../analysis_v7/colab/), [analysis_v9/colab/](../analysis_v9/colab/)). v9는 이어 하기를 노트북의 `train_stage` 안에 넣었습니다.
+- **Colab에서는 새 분기만 학습**: v7부터 Colab에서는 그 버전에서 새로 학습하는 분기만 돌리고, 블렌드 가중치는 서버에서 저장된 OOF로 고른 뒤, 세 분기를 처음으로 함께 돌리는 것은 제출 커널입니다.
+- **노트북 점검**: v8부터 노트북의 셀을 로컬에서 그대로 실행해, 미리 잰 실험의 OOF와 비트 단위로 같은지 확인한 뒤 커널을 올립니다([analysis_v8/verify_v8.py](../analysis_v8/verify_v8.py)).
 - **테스트에만 적용되는 보정의 점검**: v3부터 Sinkhorn을 검증 예측에 적용해 본 점검 결과를 로그에 함께 출력합니다.
 - **후처리 값의 nested 선택**: v6의 회사 게이트에서 썼습니다.
-- **OOF 저장**: v6·v7은 분기별 OOF를 npz로 저장하는 셀이 있습니다.
+- **OOF 저장**: v6부터 분기별 OOF를 npz로 저장하는 셀이 있습니다(`oof_v6.npz` ~ `oof_v8.npz`, v9는 LoRA OOF `ntl_lora_v9_oof.npz`).
 - **시간 예산을 줄인 통과 점검**: v7에서 긴 학습 전에 예산을 작게 줘 끝까지 도는지 먼저 확인합니다.
-- **제출 상태**: v1~v7을 모두 제출했습니다(v6 Public LB 0.552, v7 0.556).
+- **제출 상태**: v1~v8을 제출했습니다(v6 Public LB 0.552, v7 0.556, v8 0.563). v9는 Colab에서 LoRA Stage 1을 학습하는 중입니다.

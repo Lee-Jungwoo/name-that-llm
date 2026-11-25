@@ -21,6 +21,28 @@ LoRA와 DeBERTa의 1순위가 다른 지문 41.5% | 정확도: LoRA 56.3%, DeBER
 OOF BA: 블렌드 0.5868 -> 게이트 0.5886 | OOF에서 바뀐 지문 216개, 테스트에서 바뀐 지문 0개 / 3개
 
 v7 재현 확인: 블렌드 OOF BA 0.5868 -> 게이트 0.5886 (제출 커널 로그: 0.5868 -> 0.5882)
+n-gram 온도: 0.2
+LoRA 온도: 1
+DeBERTa 온도: 1
+   ng 단독 OOF BA 0.5016 (fold 0: 0.4796)
+ lora 단독 OOF BA 0.5631 (fold 0: 0.5426)
+  deb 단독 OOF BA 0.5053 (fold 0: 0.5000)
+LoRA와 DeBERTa의 1순위가 다른 지문 41.5% | 정확도: LoRA 56.3%, DeBERTa 50.5%, 둘 중 하나라도 맞힘 66.5%
+  OOF BA 0.5997 | lora=0.4, deb=0.3, ng=0.3
+  OOF BA 0.5997 | lora=0.3, deb=0.3, ng=0.4
+  OOF BA 0.5982 | lora=0.6, deb=0.2, ng=0.2
+  OOF BA 0.5964 | lora=0.4, deb=0.2, ng=0.4
+  OOF BA 0.5964 | lora=0.6, deb=0.1, ng=0.3
+  (v6 가중치 lora=0.6, deb=0.0, ng=0.4: OOF BA 0.5905)
+고정한 가중치: ng=0.2, lora=0.6, deb=0.2
+최종 검증 BA (OOF, n=2699): 0.5982 | fold 0만 (v3과 비교용): 0.5611
+게이트 입력 분기: n-gram, LoRA, DeBERTa
+[gpt] 회사 안 정확도 블렌드 0.664, 특화 분류기 0.648 | alpha 0.75 사용, alpha별 OOF BA {0: 0.5982, 0.25: 0.6016, 0.5: 0.5979, 0.75: 0.596, 1.0: 0.5934}
+[gemini] 회사 안 정확도 블렌드 0.642, 특화 분류기 0.653 | alpha 0.25 사용, alpha별 OOF BA {0: 0.596, 0.25: 0.5994, 0.5: 0.6008, 0.75: 0.5997, 1.0: 0.5986}
+[claude] 회사 안 정확도 블렌드 0.736, 특화 분류기 0.722 | alpha 0.5 사용, alpha별 OOF BA {0: 0.5994, 0.25: 0.6016, 0.5: 0.6019, 0.75: 0.6008, 1.0: 0.5986}
+[glm] 회사 안 정확도 블렌드 0.637, 특화 분류기 0.630 | alpha 1.0 사용, alpha별 OOF BA {0: 0.6019, 0.25: 0.6019, 0.5: 0.6031, 0.75: 0.6027, 1.0: 0.6023}
+OOF BA: 블렌드 0.5982 -> 게이트 0.6023 | OOF에서 바뀐 지문 200개, 테스트에서 바뀐 지문 0개 / 3개
+v8 재현 확인: 블렌드 OOF BA 0.5982 -> 게이트 0.6023 (제출 커널 로그: 0.5982 -> 0.6023)
 저장: analysis_confusion/figures/cm_gpt.png
 저장: analysis_confusion/figures/cm_gemini.png
 저장: analysis_confusion/figures/cm_claude.png
@@ -46,6 +68,16 @@ v7 재현 확인: 블렌드 OOF BA 0.5868 -> 게이트 0.5886 (제출 커널 로
   모델별 recall: gpt-5.5 0.593, gpt-5.6-luna 0.493, gpt-5.6-sol 0.480, gpt-5.6-terra 0.600, gpt-6-astra 0.813, gemini-3.1-pro-preview 0.813, gemini-3.6-flash 0.667, gemini-3.7-flash 0.407, gemini-3.8-flash 0.587, claude-fable-5 0.255, claude-opus-4-6 0.820, claude-opus-4-8 0.627, claude-opus-5 0.820, claude-sonnet-5 0.720, qwen3.8-max 0.787, glm-5.3 0.220, glm-5.3-flash 0.400, kimi-k3 0.493
   많이 헷갈린 쌍 (정답 → 예측): gemini-3.7-flash → gemini-3.8-flash 0.327, glm-5.3 → glm-5.3-flash 0.267, gemini-3.8-flash → gemini-3.7-flash 0.267, claude-fable-5 → glm-5.3-flash 0.215, gemini-3.7-flash → gemini-3.6-flash 0.193, glm-5.3 → claude-fable-5 0.173, gpt-5.6-sol → gpt-5.6-luna 0.160, glm-5.3-flash → claude-fable-5 0.160, claude-fable-5 → claude-opus-4-8 0.148, gpt-5.6-sol → gpt-5.6-terra 0.147, gpt-5.6-luna → gpt-5.6-sol 0.147, kimi-k3 → gpt-5.5 0.140
 
+[v8] BA 0.6023 | 오답 1073개, 그중 같은 회사 644개 (60.0%)
+  GPT     회사를 맞힌 비율 0.911 | 맞혔을 때 모델까지 맞힌 비율 0.666 | 지문 750개
+  Gemini  회사를 맞힌 비율 0.988 | 맞혔을 때 모델까지 맞힌 비율 0.659 | 지문 600개
+  Claude  회사를 맞힌 비율 0.868 | 맞혔을 때 모델까지 맞힌 비율 0.757 | 지문 749개
+  Qwen    회사를 맞힌 비율 0.793 | 맞혔을 때 모델까지 맞힌 비율 1.000 | 지문 150개
+  GLM     회사를 맞힌 비율 0.507 | 맞혔을 때 모델까지 맞힌 비율 0.632 | 지문 300개
+  Kimi    회사를 맞힌 비율 0.487 | 맞혔을 때 모델까지 맞힌 비율 1.000 | 지문 150개
+  모델별 recall: gpt-5.5 0.640, gpt-5.6-luna 0.520, gpt-5.6-sol 0.473, gpt-5.6-terra 0.607, gpt-6-astra 0.793, gemini-3.1-pro-preview 0.840, gemini-3.6-flash 0.740, gemini-3.7-flash 0.420, gemini-3.8-flash 0.607, claude-fable-5 0.289, claude-opus-4-6 0.813, claude-opus-4-8 0.620, claude-opus-5 0.833, claude-sonnet-5 0.727, qwen3.8-max 0.793, glm-5.3 0.240, glm-5.3-flash 0.400, kimi-k3 0.487
+  많이 헷갈린 쌍 (정답 → 예측): gemini-3.7-flash → gemini-3.8-flash 0.327, glm-5.3 → glm-5.3-flash 0.233, gemini-3.8-flash → gemini-3.7-flash 0.220, glm-5.3 → claude-fable-5 0.193, claude-fable-5 → glm-5.3-flash 0.181, gemini-3.7-flash → gemini-3.6-flash 0.180, gpt-5.6-sol → gpt-5.6-luna 0.173, glm-5.3-flash → claude-fable-5 0.160, kimi-k3 → gpt-5.5 0.153, gpt-5.6-luna → gpt-5.6-sol 0.153, claude-fable-5 → claude-opus-4-8 0.141, gpt-5.6-sol → gpt-5.6-terra 0.140
+
 GPT / v4 · n-gram + LoRA  (열: 5.5, 5.6-luna, 5.6-sol, 5.6-terra, 6-astra, 외부)
   5.5             0.607 0.053 0.060 0.067 0.000 0.213
   5.6-luna        0.047 0.513 0.127 0.093 0.107 0.113
@@ -53,12 +85,19 @@ GPT / v4 · n-gram + LoRA  (열: 5.5, 5.6-luna, 5.6-sol, 5.6-terra, 6-astra, 외
   5.6-terra       0.100 0.147 0.107 0.487 0.060 0.100
   6-astra         0.020 0.067 0.020 0.027 0.807 0.060
 
-GPT / v7 · 3분기 블렌드 + 회사 게이트  (열: 5.5, 5.6-luna, 5.6-sol, 5.6-terra, 6-astra, 외부)
+GPT / v7 · + DeBERTa, 회사 게이트  (열: 5.5, 5.6-luna, 5.6-sol, 5.6-terra, 6-astra, 외부)
   5.5             0.593 0.033 0.093 0.080 0.007 0.193
   5.6-luna        0.040 0.493 0.147 0.100 0.113 0.107
   5.6-sol         0.087 0.160 0.480 0.147 0.060 0.067
   5.6-terra       0.067 0.093 0.133 0.600 0.047 0.060
   6-astra         0.007 0.067 0.053 0.020 0.813 0.040
+
+GPT / v8 · + n-gram 풀 5,000, 문체  (열: 5.5, 5.6-luna, 5.6-sol, 5.6-terra, 6-astra, 외부)
+  5.5             0.640 0.033 0.080 0.067 0.007 0.173
+  5.6-luna        0.033 0.520 0.153 0.093 0.100 0.100
+  5.6-sol         0.093 0.173 0.473 0.140 0.053 0.067
+  5.6-terra       0.067 0.093 0.113 0.607 0.053 0.067
+  6-astra         0.027 0.060 0.033 0.047 0.793 0.040
 
 Gemini / v4 · n-gram + LoRA  (열: 3.1-pro-preview, 3.6-flash, 3.7-flash, 3.8-flash, 외부)
   3.1-pro-preview 0.847 0.080 0.033 0.033 0.007
@@ -66,11 +105,17 @@ Gemini / v4 · n-gram + LoRA  (열: 3.1-pro-preview, 3.6-flash, 3.7-flash, 3.8-f
   3.7-flash       0.047 0.160 0.407 0.367 0.020
   3.8-flash       0.027 0.113 0.227 0.627 0.007
 
-Gemini / v7 · 3분기 블렌드 + 회사 게이트  (열: 3.1-pro-preview, 3.6-flash, 3.7-flash, 3.8-flash, 외부)
+Gemini / v7 · + DeBERTa, 회사 게이트  (열: 3.1-pro-preview, 3.6-flash, 3.7-flash, 3.8-flash, 외부)
   3.1-pro-preview 0.813 0.113 0.033 0.027 0.013
   3.6-flash       0.133 0.667 0.133 0.047 0.020
   3.7-flash       0.053 0.193 0.407 0.327 0.020
   3.8-flash       0.033 0.107 0.267 0.587 0.007
+
+Gemini / v8 · + n-gram 풀 5,000, 문체  (열: 3.1-pro-preview, 3.6-flash, 3.7-flash, 3.8-flash, 외부)
+  3.1-pro-preview 0.840 0.087 0.033 0.033 0.007
+  3.6-flash       0.093 0.740 0.100 0.053 0.013
+  3.7-flash       0.053 0.180 0.420 0.327 0.020
+  3.8-flash       0.033 0.133 0.220 0.607 0.007
 
 Claude / v4 · n-gram + LoRA  (열: fable-5, opus-4-6, opus-4-8, opus-5, sonnet-5, 외부)
   fable-5         0.262 0.054 0.128 0.074 0.114 0.369
@@ -79,17 +124,28 @@ Claude / v4 · n-gram + LoRA  (열: fable-5, opus-4-6, opus-4-8, opus-5, sonnet-
   opus-5          0.020 0.007 0.020 0.827 0.033 0.093
   sonnet-5        0.053 0.053 0.067 0.013 0.733 0.080
 
-Claude / v7 · 3분기 블렌드 + 회사 게이트  (열: fable-5, opus-4-6, opus-4-8, opus-5, sonnet-5, 외부)
+Claude / v7 · + DeBERTa, 회사 게이트  (열: fable-5, opus-4-6, opus-4-8, opus-5, sonnet-5, 외부)
   fable-5         0.255 0.047 0.148 0.067 0.114 0.369
   opus-4-6        0.027 0.820 0.033 0.000 0.060 0.060
   opus-4-8        0.087 0.067 0.627 0.013 0.113 0.093
   opus-5          0.033 0.000 0.027 0.820 0.020 0.100
   sonnet-5        0.067 0.060 0.060 0.020 0.720 0.073
 
+Claude / v8 · + n-gram 풀 5,000, 문체  (열: fable-5, opus-4-6, opus-4-8, opus-5, sonnet-5, 외부)
+  fable-5         0.289 0.047 0.141 0.074 0.094 0.356
+  opus-4-6        0.040 0.813 0.033 0.000 0.060 0.053
+  opus-4-8        0.073 0.060 0.620 0.013 0.133 0.100
+  opus-5          0.027 0.013 0.027 0.833 0.020 0.080
+  sonnet-5        0.067 0.047 0.067 0.020 0.727 0.073
+
 GLM / v4 · n-gram + LoRA  (열: 5.3, 5.3-flash, 외부)
   5.3             0.267 0.227 0.507
   5.3-flash       0.227 0.327 0.447
 
-GLM / v7 · 3분기 블렌드 + 회사 게이트  (열: 5.3, 5.3-flash, 외부)
+GLM / v7 · + DeBERTa, 회사 게이트  (열: 5.3, 5.3-flash, 외부)
   5.3             0.220 0.267 0.513
   5.3-flash       0.127 0.400 0.473
+
+GLM / v8 · + n-gram 풀 5,000, 문체  (열: 5.3, 5.3-flash, 외부)
+  5.3             0.240 0.233 0.527
+  5.3-flash       0.140 0.400 0.460

@@ -1,8 +1,8 @@
-# 7. 버전별 모델 구조 다이어그램 (v1~v8)
+# 7. 버전별 모델 구조 다이어그램 (v1~v9)
 
 [← 전체 문서](README.md)
 
-v1부터 v8까지 각 버전의 모델 구조를 그림 한 장씩으로 정리했습니다. 그림에는 지문 하나가 예측이 되기까지 거치는 구조만 넣었습니다. 어떤 데이터로 어떻게 학습했는지는 각 그림 아래 **데이터와 학습**에 적었습니다. 공통 뼈대의 세부 내용(뷰 정의, LoRA 수식, 텐서 모양)은 [3. 모델 구조](03_model_architecture.md)에, 변경 이유와 효과는 [5. v1 → v7 변경과 개선 분석](05_version_history.md)과 [EXPERIMENTS.md](../EXPERIMENTS.md)에 있습니다.
+v1부터 v9까지 각 버전의 모델 구조를 정리했습니다. v1~v8은 그림 한 장씩이고, v9는 예측 구조가 v8과 같아 그림을 따로 두지 않았습니다. 그림에는 지문 하나가 예측이 되기까지 거치는 구조만 넣었습니다. 어떤 데이터로 어떻게 학습했는지는 각 그림 아래 **데이터와 학습**에 적었습니다. 공통 뼈대의 세부 내용(뷰 정의, LoRA 수식, 텐서 모양)은 [3. 모델 구조](03_model_architecture.md)에, 변경 이유와 효과는 [5. v1 → v9 변경과 개선 분석](05_version_history.md)과 [EXPERIMENTS.md](../EXPERIMENTS.md)에 있습니다.
 
 ## 0. 그림 읽는 법
 
@@ -31,7 +31,8 @@ flowchart TD
     v4 --> v5["v5<br/>+ 문체 피처 27개<br/>LB 0.550"]
     v4 --> v6["v6<br/>+ 회사 게이트<br/>LB 0.552"]
     v6 --> v7["v7<br/>+ DeBERTa 분기<br/>LB 0.556"]
-    v7 --> v8["v8<br/>+ 문체 피처 다시<br/>LB 채점 대기"]
+    v7 --> v8["v8<br/>+ 문체 피처 다시<br/>LB 0.563"]
+    v8 --> v9["v9<br/>구조는 v8과 같음<br/>LoRA 재학습 중"]
     v5 -. 문체 피처 .-> v8
 ```
 
@@ -151,9 +152,21 @@ flowchart TD
 - 신경망은 다시 학습하지 않습니다. LoRA는 v4, DeBERTa는 v7 가중치를 씁니다.
 - OOF로 보면 이득의 대부분은 문체 피처보다 풀 표본 확대에서 나옵니다.
 
-**결과**: n-gram OOF 0.5016(v7 0.4693), 3분기 블렌드 0.5982(v7 0.5868), 게이트 뒤 0.6023(v7 0.5882). LB는 채점 대기 중입니다.
+**결과**: n-gram OOF 0.5016(v7 0.4693), 3분기 블렌드 0.5982(v7 0.5868), 게이트 뒤 0.6023(v7 0.5882). Public LB 0.563(v7 0.556).
 
-## 9. 한 표로 보기
+## 9. v9: LoRA Stage 1을 Open Pool 전체로 (v8 위, 학습 중)
+
+**구조**: v8과 같습니다. 그림은 [v8 구조](figures/arch_v8.png)를 보면 됩니다. 블렌드 가중치(`blend3`)는 아직 v7 값이고, LoRA OOF가 나오면 다시 고릅니다.
+
+**데이터와 학습**
+- LoRA Stage 1 데이터를 라벨당 2,500개 표본(45,000개)에서 Open Pool 전체로 늘렸습니다. 출처의 프롬프트 id가 train `prompt_id`와 같은 86행을 빼서 230,950행입니다.
+- 라벨마다 3,541 ~ 23,537행으로 개수가 달라서, 손실에 라벨 균형 가중치(0.545 ~ 3.623, 평균 1)를 줍니다.
+- Stage 1은 28,869스텝이고 10분마다 체크포인트를 남겨 끊긴 자리에서 이어 합니다. Stage 2는 v4와 같이 fold 5개와 전체입니다.
+- n-gram은 v8, DeBERTa는 v7 가중치를 그대로 씁니다.
+
+**결과**: 아직 없습니다. 진행 상황은 [5. v1 → v9 변경과 개선 분석](05_version_history.md)의 7장에 있습니다.
+
+## 10. 한 표로 보기
 
 | 버전 | 분기 | n-gram 구조 | LoRA 입력 | 블렌드 | 블렌드 뒤 | LB |
 |:-:|---|---|---|---|---|:-:|
@@ -164,7 +177,8 @@ flowchart TD
 | v5 | 〃 | + 문체 피처 27개 | 〃 | 〃 | 〃 | 0.550 |
 | v6 | 〃 | 4뷰 TF-IDF | 〃 | 〃 → 회사 게이트 | 〃 | 0.552 |
 | v7 | + DeBERTa | 〃 | 〃 | 0.6 / 0.2 / 0.2 → 회사 게이트(3분기 입력) | 〃 | 0.556 |
-| v8 | 〃 | + 문체 피처 27개 | 〃 | 〃 | 〃 | 채점 대기 |
+| v8 | 〃 | + 문체 피처 27개 | 〃 | 〃 | 〃 | 0.563 |
+| v9 | 〃 | 〃 | 〃 | 〃 (학습 뒤 다시 고를 예정) | 〃 | 학습 중 |
 
 데이터와 학습 쪽 변화만 따로 모으면 다음과 같습니다.
 
@@ -178,10 +192,11 @@ flowchart TD
 | v6 | 〃 | v4 가중치 | - |
 | v7 | 〃 | v4 가중치 | Stage 1(풀) → fold별 Stage 2 |
 | v8 | train + 풀 88,107개(라벨당 최대 5,000개, 라벨 균형 가중치), train 가중치 12 | v4 가중치 | v7 가중치 |
+| v9 | 〃 | Stage 1(풀 전체 230,950행, 라벨 균형 손실 가중치) → Stage 2를 fold 5개 + 전체로 | v7 가중치 |
 
-## 10. 근거 파일
+## 11. 근거 파일
 
 - 그림을 그린 스크립트: [figures/make_architecture.py](figures/make_architecture.py). `python docs/figures/make_architecture.py`로 `figures/arch_v1.png` ~ `arch_v8.png`를 다시 만듭니다.
-- 노트북: [v1](../name_that_llm_v1.ipynb), [v2](../name_that_llm_v2.ipynb), [v3](../name_that_llm_v3.ipynb), [v4](../name_that_llm_v4.ipynb), [v5](../name_that_llm_v5.ipynb), [v6](../name_that_llm_v6.ipynb), [v7](../name_that_llm_v7.ipynb), [v8](../name_that_llm_v8.ipynb). 셀 순서는 v3 이후 "3. n-gram → 4. LoRA → (4-2. DeBERTa) → 5. 블렌딩 → (5-1. 회사 게이트) → 6. 프롬프트 중심화 → 7. Sinkhorn → 8. 제출"입니다.
-- v8 노트북을 만든 스크립트와 점검: [analysis_v8/make_v8.py](../analysis_v8/make_v8.py), [analysis_v8/logs/](../analysis_v8/logs/).
-- 버전별 변경 매트릭스(v7까지): [5. v1 → v7 변경과 개선 분석](05_version_history.md)의 2장.
+- 노트북: [v1](../name_that_llm_v1.ipynb), [v2](../name_that_llm_v2.ipynb), [v3](../name_that_llm_v3.ipynb), [v4](../name_that_llm_v4.ipynb), [v5](../name_that_llm_v5.ipynb), [v6](../name_that_llm_v6.ipynb), [v7](../name_that_llm_v7.ipynb), [v8](../name_that_llm_v8.ipynb), [v9](../name_that_llm_v9.ipynb). 셀 순서는 v3 이후 "3. n-gram → 4. LoRA → (4-2. DeBERTa) → 5. 블렌딩 → (5-1. 회사 게이트) → 6. 프롬프트 중심화 → 7. Sinkhorn → 8. 제출"입니다.
+- v8 노트북을 만든 스크립트와 점검: [analysis_v8/make_v8.py](../analysis_v8/make_v8.py), [analysis_v8/logs/](../analysis_v8/logs/). v9는 [analysis_v9/make_v9.py](../analysis_v9/make_v9.py).
+- 버전별 변경 매트릭스(v9까지): [5. v1 → v9 변경과 개선 분석](05_version_history.md)의 2장.

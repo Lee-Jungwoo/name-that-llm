@@ -1,11 +1,11 @@
-# 3. 모델 구조 (v1~v7 공통)
+# 3. 모델 구조 (v1~v9 공통)
 
 [← 전체 문서](README.md)
 
-v1부터 v7까지 모든 노트북이 공유하는 뼈대는 하나입니다. 지문 하나를 **n-gram 분기**(4뷰 TF-IDF + LinearSVC, CPU)와 **LoRA 분기**(Qwen3-4B-Base 앞 18층 + 직접 구현한 LoRA + 여러 깊이 풀링, GPU)가 따로 점수 매기고, 각 점수를 온도 조정한 log 확률로 바꿔 가중합한 뒤, 테스트에서만 프롬프트 중심화를 거쳐 argmax로 18개 모델 중 하나를 고릅니다. 이 문서는 그 공통 뼈대를 코드 수준으로 설명합니다. 버전마다 추가되거나 바뀐 것은 [9. 버전마다 다른 점](#9-버전마다-다른-점)에 이름만 적고, 내용은 [5. v1 → v7 변경과 개선 분석](05_version_history.md)에 있습니다.
+v1부터 v9까지 모든 노트북이 공유하는 뼈대는 하나입니다. 지문 하나를 **n-gram 분기**(4뷰 TF-IDF + LinearSVC, CPU)와 **LoRA 분기**(Qwen3-4B-Base 앞 18층 + 직접 구현한 LoRA + 여러 깊이 풀링, GPU)가 따로 점수 매기고, 각 점수를 온도 조정한 log 확률로 바꿔 가중합한 뒤, 테스트에서만 프롬프트 중심화를 거쳐 argmax로 18개 모델 중 하나를 고릅니다. 이 문서는 그 공통 뼈대를 코드 수준으로 설명합니다. 버전마다 추가되거나 바뀐 것은 [9. 버전마다 다른 점](#9-버전마다-다른-점)에 이름만 적고, 내용은 [5. v1 → v9 변경과 개선 분석](05_version_history.md)에 있습니다.
 
 > [!NOTE]
-> **"공통"의 기준** · 7개 노트북의 코드 셀에서 함수·클래스 정의를 뽑아 버전끼리 비교했습니다. 이 문서에 인용한 코드는 7개 노트북에서 글자 하나까지 같은 부분입니다. 표의 기본값도 7개 노트북의 `CFG`에서 값이 같은 키만 실었습니다.
+> **"공통"의 기준** · 9개 노트북의 코드 셀에서 함수·클래스 정의를 뽑아 버전끼리 비교했습니다. 이 문서에 인용한 코드는 9개 노트북에서 글자 하나까지 같은 부분입니다(예외는 그 자리에 적었습니다). 표의 기본값도 9개 노트북의 `CFG`에서 값이 같은 키만 실었고, 뒤 버전에서 기본값이 바뀐 두 키에는 표시를 했습니다. v9는 아직 학습 중인 노트북입니다.
 
 ## 1. 전체 파이프라인
 
@@ -248,11 +248,11 @@ return self.head(self.drop(torch.cat(feats, dim=-1)))
 | 추론 배치 | 전체를 길이순으로 정렬, 크기는 `batch_size × 2` |
 | 비정상 로짓 | NaN/inf가 나온 지문의 로짓은 0으로 바꿈. 이 지문은 n-gram 쪽 예측을 따르게 됨 |
 
-`batch_size`의 기본값은 7개 노트북 모두 16이지만, 실제 학습에서는 GPU 메모리에 맞춰 `NTL_CFG`로 더 작은 값을 덮어썼습니다. 실행별 값은 [5. v1 → v7 변경과 개선 분석](05_version_history.md)에 있습니다.
+`batch_size`의 기본값은 9개 노트북 모두 16이지만, 실제 학습에서는 GPU 메모리에 맞춰 `NTL_CFG`로 더 작은 값을 덮어썼습니다. 실행별 값은 [5. v1 → v9 변경과 개선 분석](05_version_history.md)에 있습니다.
 
 ### 3.5 학습 단계 함수 `train_stage`
 
-LoRA 분기의 학습은 `train_stage(model, tok, device, texts, labels, epochs, lr, budget_h, name)` 한 함수를 데이터만 바꿔 여러 번 부르는 방식입니다. 어떤 데이터로 몇 번 부르는지는 버전마다 다르고([9장](#9-버전마다-다른-점)), 함수 안의 학습 설정 중 아래 항목은 모든 버전에서 같습니다.
+LoRA 분기의 학습은 `train_stage(model, tok, device, texts, labels, epochs, lr, budget_h, name)` 한 함수를 데이터만 바꿔 여러 번 부르는 방식입니다. 어떤 데이터로 몇 번 부르는지는 버전마다 다르고([9장](#9-버전마다-다른-점)), 함수 안의 학습 설정 중 아래 항목은 모든 버전에서 같습니다. v9는 이 함수에 행마다 손실 가중치(`weights`)와 Stage 1 체크포인트·이어 하기(`ckpt_path`)를 더했고, 아래 항목은 바꾸지 않았습니다.
 
 | 항목 | 값 |
 |---|---|
@@ -266,7 +266,7 @@ LoRA 분기의 학습은 `train_stage(model, tok, device, texts, labels, epochs,
 | 시간 예산 | `budget_h`시간을 넘기면 그 자리에서 끊고 다음 단계로 넘어감 |
 | 배치 섞기 시드 | `seed + epoch` |
 
-`CFG`의 단계별 기본값은 7개 노트북에서 같습니다. Stage 1(외부 풀)은 1 epoch · lr 2e-4 · 예산 3시간, Stage 2(train)는 2 epochs · lr 5e-5 · 예산 1시간입니다. 다만 Stage 1은 외부 풀이 입력에 있을 때만 실행되고, 실행에 따라 `NTL_CFG`로 값을 덮어쓴 경우가 있습니다.
+`CFG`의 단계별 기본값은 9개 노트북에서 같습니다. Stage 1(외부 풀)은 1 epoch · lr 2e-4, Stage 2(train)는 2 epochs · lr 5e-5 · 예산 1시간입니다. Stage 1의 시간 예산만 v1~v8이 3시간이고, 풀 전체로 학습하는 v9는 14시간입니다. 다만 Stage 1은 외부 풀이 입력에 있을 때만 실행되고, 실행에 따라 `NTL_CFG`로 값을 덮어쓴 경우가 있습니다.
 
 ## 4. 온도 조정과 블렌딩
 
@@ -380,13 +380,13 @@ run_lora = CFG["use_lora"] and base_dir is not None and (device.type == "cuda" o
 
 ## 8. 설정 키와 기본값
 
-하이퍼파라미터는 노트북 앞쪽의 `CFG` 딕셔너리에 모여 있고, 환경 변수 `NTL_CFG`(JSON)로 일부를 덮어씁니다. 아래는 7개 노트북에서 키와 기본값이 모두 같은 항목입니다.
+하이퍼파라미터는 노트북 앞쪽의 `CFG` 딕셔너리에 모여 있고, 환경 변수 `NTL_CFG`(JSON)로 일부를 덮어씁니다. 아래는 9개 노트북에서 키와 기본값이 모두 같은 항목입니다. †를 붙인 두 값은 v1~v7에서 같았고 뒤 버전에서 바뀌었습니다.
 
 | 구성 | 키 | 기본값 | 의미 |
 |---|---|:-:|---|
 | 공통 | `seed` | 42 | fold 분할과 배치 섞기 등의 시드 |
 | | `n_folds` | 5 | 검증 fold 수 |
-| n-gram | `ngram_pool_per_label` | 2500 | 외부 풀에서 라벨당 뽑는 지문 수 |
+| n-gram | `ngram_pool_per_label` | 2500 † | 외부 풀에서 라벨당 뽑는 지문 수. v8부터 5000 |
 | | `svc_c` | 0.1 | LinearSVC의 `C` |
 | LoRA 구조 | `use_lora` | `True` | LoRA 분기 사용 여부 |
 | | `force_lora` | `False` | GPU가 없어도 실행(동작 점검용) |
@@ -398,7 +398,7 @@ run_lora = CFG["use_lora"] and base_dir is not None and (device.type == "cuda" o
 | | `max_len` | 384 | 지문 하나의 최대 토큰 수 |
 | | `batch_size` | 16 | 학습 배치 크기(추론은 2배). 실행 때 덮어쓴 값은 다름 |
 | | `lora_pool_per_label` | 2500 | Stage 1용으로 외부 풀에서 라벨당 뽑는 지문 수 |
-| | `stage1_epochs` / `stage1_lr` / `stage1_budget_h` | 1 / 2e-4 / 3.0 | 외부 풀 학습 단계 |
+| | `stage1_epochs` / `stage1_lr` / `stage1_budget_h` | 1 / 2e-4 / 3.0 † | 외부 풀 학습 단계. 시간 예산은 v9에서 14.0 |
 | | `stage2_epochs` / `stage2_lr` / `stage2_budget_h` | 2 / 5e-5 / 1.0 | train 미세 조정 단계 |
 | 중심화 | `use_centering` | `True` | 프롬프트 중심화 사용 여부 |
 | | `center_strength` | 0.5 | 묶음 평균을 빼는 비율 |
@@ -408,7 +408,7 @@ run_lora = CFG["use_lora"] and base_dir is not None and (device.type == "cuda" o
 
 ## 9. 버전마다 다른 점
 
-아래 항목은 일부 버전에만 있거나 버전마다 값이 다릅니다. 내용과 효과는 모두 [5. v1 → v7 변경과 개선 분석](05_version_history.md)에 있고, 버전별 구조 그림은 [7. 버전별 모델 구조 다이어그램](07_architecture_by_version.md)에 있습니다.
+아래 항목은 일부 버전에만 있거나 버전마다 값이 다릅니다. 내용과 효과는 모두 [5. v1 → v9 변경과 개선 분석](05_version_history.md)에 있고, 버전별 구조 그림은 [7. 버전별 모델 구조 다이어그램](07_architecture_by_version.md)에 있습니다.
 
 - **외부 풀과 2단계 학습**: v1은 외부 풀 없이 train만으로 학습했습니다. v2부터 n-gram이 풀 표본을 함께 쓰고, LoRA는 풀로 Stage 1을 학습한 뒤 train으로 Stage 2를 학습합니다. (v1과 v2는 코드가 같고 커널에 붙인 입력이 다릅니다.)
 - **n-gram의 train 지문 가중치**: v1·v2는 1, v3부터는 후보 {1, 4, 12}를 OOF로 비교해 고릅니다.
@@ -416,15 +416,17 @@ run_lora = CFG["use_lora"] and base_dir is not None and (device.type == "cuda" o
 - **Sinkhorn 클래스 비율 보정**: v3부터 중심화 다음, argmax 앞에 들어갑니다.
 - **echo 입력**: v4부터 Qwen에 지문을 두 번 이어 넣고 두 번째 사본의 토큰만 풀링합니다. 풀링 마스크가 `attention_mask`에서 `pool_mask`로 바뀌고, gradient 누적(`grad_accum`)이 생겼습니다.
 - **LoRA 5-fold와 테스트 방식**: v1~v3은 fold 0만 빼고 한 번 학습합니다. v4부터는 fold마다 Stage 2를 따로 학습해 LoRA도 OOF를 만들고, 테스트 로짓은 fold 5개 평균 또는 train 전체 학습 모델에서 가져옵니다(`lora_test`).
-- **문체 피처 27개**: v5만, n-gram 행렬 옆에 연속 문체 피처 블록을 붙입니다(`stylo_alpha`).
-- **회사 게이트**: v6·v7은 블렌드와 중심화 사이에서 회사 안 분포를 회사 전용 로지스틱 회귀 쪽으로 옮깁니다(`use_gate`).
-- **DeBERTa-v3-large 분기와 3분기 블렌드**: v7은 세 번째 분기를 더하고 가중치 세 개의 블렌드를 씁니다(`use_deberta`, `blend3`).
+- **문체 피처 27개**: v5와 v8·v9에서 n-gram 행렬 옆에 연속 문체 피처 블록을 붙입니다(`stylo_alpha`). v6·v7은 v4에서 갈라져 이 블록이 없습니다.
+- **회사 게이트**: v6부터 블렌드와 중심화 사이에서 회사 안 분포를 회사 전용 로지스틱 회귀 쪽으로 옮깁니다(`use_gate`).
+- **DeBERTa-v3-large 분기와 3분기 블렌드**: v7부터 세 번째 분기를 더하고 가중치 세 개의 블렌드를 씁니다(`use_deberta`, `blend3`).
+- **n-gram 풀 표본 5,000개와 라벨 균형 가중치**: v8부터 n-gram 분기의 풀 표본을 라벨당 5,000개로 늘리고 풀 행에 라벨 균형 가중치를 줍니다(`ngram_pool_per_label`, `ngram_pool_balance`).
+- **LoRA Stage 1을 Open Pool 전체로**: v9는 LoRA Stage 1에 풀 전체를 쓰고 손실에 라벨 균형 가중치를 줍니다(`lora_pool_mode`, `lora_pool_balance`). 그에 맞춰 `train_stage`에 행별 가중치와 체크포인트가, `tokenize_all`에 나눠서 토크나이즈하는 경로가 생겼습니다(토큰 값은 같음).
 
 참고로 v4 시점의 구조를 한 장으로 그린 그림이 [analysis_v4/figures/architecture_v4.png](../analysis_v4/figures/architecture_v4.png)에 있습니다. 이 그림에는 위 항목 중 v4까지의 변경(외부 풀, train 가중치 12, echo 입력, `w` = 0.6, Sinkhorn)이 함께 들어 있습니다.
 
 ## 10. 근거 파일
 
-- 노트북: [v1](../name_that_llm_v1.ipynb), [v2](../name_that_llm_v2.ipynb), [v3](../name_that_llm_v3.ipynb), [v4](../name_that_llm_v4.ipynb), [v5](../name_that_llm_v5.ipynb), [v6](../name_that_llm_v6.ipynb), [v7](../name_that_llm_v7.ipynb). 구조 설명은 각 노트북의 "3. n-gram 모델", "4. LoRA 분류기", "5. 블렌딩", "6. 프롬프트 중심화" 절에 있습니다.
-- 7개 노트북에서 정의가 완전히 같은 것: `VIEWS`, `FUNCTION_WORDS`, `LABELS`, `to_shape`, `to_function`, `MultiViewVectorizer`, `sample_pool`, `LoRALinear`, `add_lora`, `build_classifier`, `find_base_model`, `pick_device`, `make_batches`, `trainable_state`, `log_softmax_np`, `best_temperature`, `topic_clusters`, `center_by_cluster`, 그리고 데이터 읽기 셀, fold 분할 셀, 중심화 셀, 제출 셀 전체.
-- v4에서 한 번 바뀐 것: `StyleClassifier.forward`(풀링 마스크 인자), `tokenize_all`, `collate`, `train_stage`, `predict_logits`. `StyleClassifier.__init__`과 풀링 루프는 그대로입니다.
+- 노트북: [v1](../name_that_llm_v1.ipynb), [v2](../name_that_llm_v2.ipynb), [v3](../name_that_llm_v3.ipynb), [v4](../name_that_llm_v4.ipynb), [v5](../name_that_llm_v5.ipynb), [v6](../name_that_llm_v6.ipynb), [v7](../name_that_llm_v7.ipynb), [v8](../name_that_llm_v8.ipynb), [v9](../name_that_llm_v9.ipynb). 구조 설명은 각 노트북의 "3. n-gram 모델", "4. LoRA 분류기", "5. 블렌딩", "6. 프롬프트 중심화" 절에 있습니다.
+- 9개 노트북에서 정의가 완전히 같은 것: `VIEWS`, `FUNCTION_WORDS`, `LABELS`, `to_shape`, `to_function`, `MultiViewVectorizer`, `sample_pool`, `LoRALinear`, `add_lora`, `build_classifier`, `find_base_model`, `pick_device`, `make_batches`, `trainable_state`, `log_softmax_np`, `best_temperature`, `topic_clusters`, `center_by_cluster`, 그리고 fold 분할 셀, 중심화 셀, 제출 셀 전체. 데이터 읽기 셀은 v1~v8에서 같고 v9가 열 하나를 더 읽습니다.
+- v4에서 한 번 바뀐 것: `StyleClassifier.forward`(풀링 마스크 인자), `tokenize_all`, `collate`, `train_stage`, `predict_logits`. `StyleClassifier.__init__`과 풀링 루프는 그대로입니다. v9에서 `tokenize_all`, `collate`, `train_stage`가 한 번 더 바뀌었습니다(9장).
 - 실행 로그의 수치(LoRA 층 72개, 학습 파라미터 6,256,658개, 특성 수, n-gram 온도 0.2)는 v2·v3 노트북에 저장된 출력과 v5 제출 커널 로그에서 확인했습니다.

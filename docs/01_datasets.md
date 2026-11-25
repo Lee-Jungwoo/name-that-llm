@@ -1,8 +1,8 @@
-# 1. 사용 데이터셋 (v1~v7 공통)
+# 1. 사용 데이터셋 (v1~v9 공통)
 
 [← 전체 문서](README.md)
 
-이 대회에서 쓴 데이터는 두 가지입니다. 대회가 준 `train.csv`(지문 2,699개, 모델 18개)와 커뮤니티가 만든 외부 데이터 **Open Pool**(같은 18개 모델의 지문 약 23만 개)입니다. 데이터를 읽는 코드 셀은 v1~v7 노트북 7개에서 글자 하나까지 같습니다. 이 문서는 각 데이터의 구조와 크기, 학습에 넣기 전의 거르기와 표본 추출, 써 보고 넣지 않기로 한 외부 데이터, 분석용 부가 파일을 정리합니다.
+이 대회에서 쓴 데이터는 두 가지입니다. 대회가 준 `train.csv`(지문 2,699개, 모델 18개)와 커뮤니티가 만든 외부 데이터 **Open Pool**(같은 18개 모델의 지문 약 23만 개)입니다. 데이터를 읽는 코드 셀은 v1~v8 노트북 8개에서 글자 하나까지 같고, v9는 Open Pool의 열을 하나(`prompt_group`) 더 읽는 것만 다릅니다. 이 문서는 각 데이터의 구조와 크기, 학습에 넣기 전의 거르기와 표본 추출, 써 보고 넣지 않기로 한 외부 데이터, 분석용 부가 파일을 정리합니다.
 
 - fold를 어떻게 나누는지는 [02_fold_split.md](02_fold_split.md), 데이터가 들어가는 모델은 [03_model_architecture.md](03_model_architecture.md), 실행 환경과 절차는 [04_experiment_method.md](04_experiment_method.md), 버전마다 달라진 점은 [05_version_history.md](05_version_history.md)에 있습니다.
 - 수치는 2026-11-25에 로컬 파일(`data/`, git 제외)을 직접 읽어 확인한 값입니다. 다른 문서에서 가져온 값에는 출처를 적었습니다.
@@ -14,7 +14,7 @@
 | `train.csv` | 대회 `name-that-llm` | 2,699행, 프롬프트 150개 × 모델 18개 | 학습과 검증(라벨 있음) |
 | `test.csv` | 대회 | 공개 3행, 제출 때는 숨겨진 약 4,000행 | 예측 대상(라벨 없음) |
 | `sample_submission.parquet` | 대회 | 3행 | 제출 형식 |
-| `ntl_open_pool.parquet` (Open Pool) | Kaggle 데이터셋 `crtproduction/name-that-llm-open-pool` | 231,036행(11/18 내려받은 판) | 라벨당 2,500개를 뽑아 추가 학습 데이터로 사용. 선택 입력 |
+| `ntl_open_pool.parquet` (Open Pool) | Kaggle 데이터셋 `crtproduction/name-that-llm-open-pool` | 231,036행(11/18 내려받은 판. v5~v8 제출 커널이 쓴 판) | 라벨마다 표본을 뽑아(기본 2,500개) 추가 학습 데이터로 사용. 선택 입력 |
 | Response Corpus | Kaggle 데이터셋 `olegzholobov/name-that-llm-response-corpus` | short 뷰 24,025셀 | 검토만 하고 **넣지 않음** |
 
 ```mermaid
@@ -22,7 +22,7 @@ flowchart LR
     T["train.csv<br/>2,699개"] --> NG["n-gram 분기"]
     T --> LO["LoRA 분기"]
     P["Open Pool<br/>231,036개"] --> D["라벨 18개만 남김<br/>train과 같은 지문 제외"]
-    D --> S["sample_pool<br/>라벨당 2,500개<br/>(match_weight 비례)"]
+    D --> S["sample_pool<br/>라벨당 2,500개 (기본값)<br/>(match_weight 비례)"]
     S -->|"seed 0, 45,000개"| NG
     S -->|"seed 42, 45,000개"| LO
     X["test.csv"] --> NG
@@ -68,7 +68,7 @@ flowchart LR
 
 ### 1.3 제출 형식
 
-`sample_submission.parquet`은 `id`, `model` 두 열이고, 3행 모두 `gpt-5.5`로 채워져 있습니다. 노트북은 같은 두 열로 `submission.parquet`을 만듭니다. 마지막 셀은 7개 버전 모두 다음을 확인하고 저장합니다.
+`sample_submission.parquet`은 `id`, `model` 두 열이고, 3행 모두 `gpt-5.5`로 채워져 있습니다. 노트북은 같은 두 열로 `submission.parquet`을 만듭니다. 마지막 셀은 9개 버전 모두 다음을 확인하고 저장합니다.
 
 ```python
 submission = pd.DataFrame({"id": test["id"].values, "model": [LABELS[i] for i in final_lp.argmax(1)]})
@@ -157,7 +157,7 @@ submission.to_parquet(WORK_DIR / "submission.parquet", index=False)
 
 ### 3.4 학습에 넣기 전: 거르기와 표본 추출
 
-**1) 읽기와 거르기** (데이터 셀, 7개 버전 동일)
+**1) 읽기와 거르기** (데이터 셀, v1~v8 동일. v9는 `prompt_group` 열도 함께 읽음)
 
 ```python
 pool = pd.read_parquet(pool_path, columns=["text", "model", "match_weight"])
@@ -171,7 +171,7 @@ pool = pool[~pool.text.map(norm).isin(set(train.text.map(norm)))].reset_index(dr
 - 이 정규화는 **중복 판정에만** 씁니다. 학습에는 원문 그대로 들어갑니다.
 - 지금 판에서는 이 단계에서 **빠지는 지문이 0개**입니다(231,036 → 231,036). 노트북이 출력하는 "Open Pool: N개 지문"은 거른 뒤의 수입니다.
 
-**2) 표본 추출** (`sample_pool`, 7개 버전 동일)
+**2) 표본 추출** (`sample_pool`, 9개 버전 동일)
 
 ```python
 def sample_pool(n_per_label, seed=0):
@@ -187,7 +187,7 @@ def sample_pool(n_per_label, seed=0):
     return pool.loc[np.concatenate(picks)].reset_index(drop=True)
 ```
 
-- 라벨마다 2,500개를 `match_weight`에 비례하는 확률로 **비복원** 추출합니다. 가장 적은 라벨도 3,541개라서 모든 라벨이 2,500개를 채우고, 표본은 **45,000개**(18 × 2,500)로 라벨이 균등합니다. 풀 전체의 약 19%입니다.
+- 라벨마다 정해진 개수(기본값 2,500개)를 `match_weight`에 비례하는 확률로 **비복원** 추출합니다. 기본값에서는 가장 적은 라벨도 3,541개라서 모든 라벨이 2,500개를 채우고, 표본은 **45,000개**(18 × 2,500)로 라벨이 균등합니다. 풀 전체의 약 19%입니다. 풀이 개수보다 적은 라벨은 있는 만큼만 뽑힙니다(`k = min(n, …)`).
 - 가중치는 **뽑을 확률**로만 쓰입니다. 뽑힌 뒤에는 학습에서 지문마다 같은 무게입니다.
 - 두 분기가 표본을 따로 뽑습니다. n-gram 분기는 `seed=0`(`ngram_pool_per_label`), LoRA 분기는 `seed=42`(`lora_pool_per_label`)라서 서로 다른 45,000개입니다.
 - 풀 파일이 입력에 없으면 `pool = None`이 되고, 두 분기 모두 train만으로 학습합니다. 풀은 필수 입력이 아닙니다.
@@ -200,9 +200,13 @@ def sample_pool(n_per_label, seed=0):
 |:-:|---|
 | 223,840 | [v2 노트북](../name_that_llm_v2.ipynb)에 저장된 출력 |
 | 226,191 | [v3 노트북](../name_that_llm_v3.ipynb)에 저장된 출력, [EXPERIMENTS.md](../EXPERIMENTS.md) 실험 1 |
-| 231,036 | v5 제출 커널 로그, 로컬 파일(11/18 내려받음) |
+| 231,036 | v5~v8 제출 커널 로그, 로컬 파일(11/18 내려받음) |
+| 238,750 | 11/25에 다시 내려받은 판(서버의 `out/pool_new_20261125/`, git 제외). 가장 적은 라벨은 그대로 `gemini-3.7-flash` 3,541개. 아직 어느 제출에도 쓰지 않았음 |
 
 [name_that_llm_high_scorers_report.md](../name_that_llm_high_scorers_report.md)는 이보다 앞선 판을 198k~211k행으로 적고 있습니다(이 저장소에서 쓴 적은 없음).
+
+- 238,750행은 train과 겹치는 지문을 거르기 전의 수입니다. v9의 Colab 학습이 이 판으로 Stage 1을 이어 하려다, 행 수가 체크포인트와 달라 멈췄습니다(`238,664개 / 29833스텝` 대 `230,950개 / 28869스텝`). 그래서 v9는 231,036행 판으로 학습하고 있습니다.
+- Kaggle 커널은 입력으로 붙인 시점의 데이터셋 판을 씁니다. 다음 제출 커널이 어느 판을 붙였는지는 로그의 `Open Pool: …개 지문` 줄로 확인합니다.
 
 ## 4. 검토했지만 넣지 않은 데이터: Response Corpus
 
@@ -233,7 +237,7 @@ def sample_pool(n_per_label, seed=0):
 - 미러의 풀은 Kaggle의 Open Pool과 **다른 표본**입니다(49,050개 대 231,036개, `match_weight` 열 없음). 이 파일로 낸 수치는 제출 노트북의 풀 수치와 바로 비교할 수 없습니다. [analysis_v6/report.md](../analysis_v6/report.md)의 회사 전용 SVC 실험도 이 미러 풀을 썼습니다.
 - 지금은 서버에 원본 `train.csv`가 있으므로(`data/name-that-llm/`), 새 분석에는 원본을 쓰면 됩니다.
 
-## 6. 읽기와 전처리 (v1~v7 공통)
+## 6. 읽기와 전처리 (v1~v9 공통)
 
 ### 6.1 경로 찾기
 
@@ -284,14 +288,15 @@ groups = train.prompt_id.values                       # fold를 나눌 묶음
 | `ntl-lora-weights` | LoRA 가중치 | v1 |
 | `ntl-lora-weights-pool` | LoRA 가중치 | v2 |
 | `ntl-lora-weights-v3` | LoRA 가중치 | v3 |
-| `blkbeansoymilk/ntl-lora-weights-v4-echo-cv` | `ntl_lora_fold0.pt` ~ `fold4.pt`, `ntl_lora_full.pt` (개당 약 25MB). 서버의 `data/weights_v4/`와 같은 파일 | v4, v5, v6, v7 |
-| `blkbeansoymilk/ntl-deberta-v7` | DeBERTa OOF와 가중치, 토크나이저 | v7 |
+| `blkbeansoymilk/ntl-lora-weights-v4-echo-cv` | `ntl_lora_fold0.pt` ~ `fold4.pt`, `ntl_lora_full.pt` (개당 약 25MB). 서버의 `data/weights_v4/`와 같은 파일 | v4 ~ v8 |
+| `blkbeansoymilk/ntl-deberta-v7` | DeBERTa OOF와 가중치, 토크나이저 | v7, v8, v9 |
+| (아직 없음) | v9 LoRA 가중치 `ntl_lora_v9_*.pt`와 OOF `ntl_lora_v9_oof.npz`. Colab에서 학습 중 | v9 |
 
 함께 붙이는 사전학습 모델은 Kaggle 모델 `qwen-lm/qwen-3`(Transformers, `4b-base`)이고, Colab에서는 Hugging Face의 `Qwen/Qwen3-4B-Base`를 받습니다. 데이터셋 이름은 [EXPERIMENTS.md](../EXPERIMENTS.md)의 "재현용 파일"과 커널 메타데이터([analysis_v6/kernel/kernel-metadata.json](../analysis_v6/kernel/kernel-metadata.json))에서 가져왔습니다.
 
 ## 버전마다 다른 점
 
-데이터를 읽고 거르고 뽑는 **코드는 7개 버전이 같습니다.** 달라진 것은 입력에 무엇을 붙였는지와 그 시점의 풀입니다. 자세한 내용은 [05_version_history.md](05_version_history.md)에 있습니다.
+데이터를 읽고 거르고 뽑는 **코드는 9개 버전이 거의 같습니다**(v9만 열 하나를 더 읽음). 달라진 것은 입력에 무엇을 붙였는지, 그 시점의 풀, 그리고 분기마다 풀에서 몇 개를 어떻게 쓰는지입니다. 자세한 내용은 [05_version_history.md](05_version_history.md)에 있습니다.
 
 - **v1**: Open Pool을 입력에 붙이지 않아 train만으로 학습했습니다.
 - **v2**: Open Pool을 처음 썼습니다(223,840개).
@@ -299,5 +304,7 @@ groups = train.prompt_id.values                       # fold를 나눌 묶음
 - **v5**: 풀이 231,036개로 갱신된 뒤 실행해서, v4와 비교할 기준선을 새 풀로 다시 쟀습니다.
 - **v6**: 제출 전 분석은 옛 풀(226,191개) 시점의 v4 OOF로 했고, 제출 커널은 새 풀(231,036개)에서 돌았습니다.
 - **v7**: Open Pool 표본을 세 번째 분기(DeBERTa)의 Stage 1에도 씁니다(`deb_pool_per_label`, LoRA와 같은 seed라 같은 표본).
+- **v8**: n-gram 분기의 풀 표본을 라벨당 5,000개로 늘리고(`ngram_pool_per_label`), 풀 행에 라벨 균형 가중치를 줍니다(`ngram_pool_balance`). gemini-3.7-flash와 qwen3.8-max는 풀이 5,000개보다 적어서 표본은 88,107행입니다.
+- **v9**: LoRA 분기의 Stage 1이 표본이 아니라 **Open Pool 전체**를 쓰고(`lora_pool_mode = "full"`), 손실에 라벨 균형 가중치를 줍니다. 출처의 프롬프트 id가 train `prompt_id`와 같은 풀 행 86개를 뺍니다(`lora_drop_train_prompt_ids`). 이 판단에 쓰려고 데이터 셀이 `prompt_group` 열을 읽습니다.
 - **train 행 가중치**: n-gram 분기에서 train 지문과 풀 지문의 무게를 다르게 주는 것은 v3부터입니다.
 - **Response Corpus**: v5의 n-gram 설정 위에서 시험했고 어느 버전에도 넣지 않았습니다.
