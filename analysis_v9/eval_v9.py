@@ -56,7 +56,7 @@ def best_t(s, grid=(0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 1.5, 2, 3)):
 ba = lambda pred, idx=slice(None): bas(y[idx], pred[idx])
 GRID = [dict(lora=a / 10, deb=b / 10, ng=round(1 - a / 10 - b / 10, 1))
         for a, b in itertools.product(range(11), repeat=2) if a + b <= 10]
-fmt = lambda w: f"lora {w['lora']:.1f} / deb {w['deb']:.1f} / ng {w['ng']:.1f}"
+fmt = lambda w: f"lora {w['lora']:.1f} / deb {w['deb']:.1f} / ng {abs(w['ng']):.1f}"
 per_fold = lambda pred: " / ".join(f"{ba(pred, b):.4f}" for _, b in folds)
 
 prompts = np.unique(pid)
@@ -133,6 +133,11 @@ print(f"1순위가 다른 지문: v9 vs v4 LoRA {(p9 != p4).mean():.1%} ({(p9 !=
 print(f"정확도: v4 {(p4 == y).mean():.1%}, v9 {(p9 == y).mean():.1%}, DeBERTa {(pd_ == y).mean():.1%} | "
       f"v9와 DeBERTa 중 하나라도 맞힘 {((p9 == y) | (pd_ == y)).mean():.1%} (v4와 DeBERTa {((p4 == y) | (pd_ == y)).mean():.1%}) | "
       f"v4만 맞힘 {((p4 == y) & (p9 != y)).sum()}개, v9만 맞힘 {((p9 == y) & (p4 != y)).sum()}개")
+# Stage 2의 검증 손실: fold 밖 예측(OOF) 로짓의 평균 cross-entropy (온도 1, label smoothing·가중치 없음). fold마다 값 하나이고 곡선은 없습니다.
+ce = lambda s, idx=slice(None): float(-lsm(s)[np.arange(len(y)), y][idx].mean())
+print("Stage 2 검증 손실(OOF 평균 cross-entropy, 온도 1): "
+      f"v9 전체 {ce(lora9):.4f} | fold별 " + " / ".join(f"{ce(lora9, b):.4f}" for _, b in folds)
+      + f" || v4 전체 {ce(lora4):.4f} | fold별 " + " / ".join(f"{ce(lora4, b):.4f}" for _, b in folds))
 print("라벨별 recall (v4 -> v9):")
 for k, name in enumerate(LABELS):
     m = y == k

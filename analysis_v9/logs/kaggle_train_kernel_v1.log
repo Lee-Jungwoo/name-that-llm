@@ -1,0 +1,36 @@
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 없음 (train만 사용)
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+프롬프트 그룹 KFold BA: 0.3145
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+device=cuda:0, base=/kaggle/input/models/qwen-lm/qwen-3/transformers/4b-base/1, LoRA 실행=True
+GPU: Tesla T4 | capability (7, 5) | torch 2.11.0+cu130 | transformers 5.20.2 | 정밀도 fp16 + GradScaler
+LoRA 층 72개, 학습 파라미터 6,256,658개, 깊이 [2, 4, 6, 9, 12, 15, 18]
+저장된 fold 가중치를 사용합니다: ['/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold0.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold1.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold2.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold3.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold4.pt']
+[stage2-full] 67/676 loss 1.304 | 2.0분
+[stage2-full] 134/676 loss 1.377 | 3.8분
+[stage2-full] 201/676 loss 1.372 | 5.8분
+[stage2-full] 268/676 loss 1.368 | 7.7분
+[stage2-full] 335/676 loss 1.347 | 9.6분
+[stage2-full] 402/676 loss 1.055 | 11.5분
+[stage2-full] 469/676 loss 1.042 | 13.3분
+[stage2-full] 536/676 loss 1.126 | 15.3분
+[stage2-full] 603/676 loss 1.071 | 17.2분
+[stage2-full] 670/676 loss 1.040 | 19.2분
+[stage2-full] 완료: 676스텝, 비정상 손실로 건너뜀 0회, 19.4분
+테스트 로짓: train 전체로 학습한 모델 1개
+LoRA OOF BA: 0.6072 (fold 0: 0.5852) | 24.6분
+저장: ntl_lora_v9_oof.npz
+== LORA RUN DONE == 24.6분
+/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
+  cells[i][c] = re.sub('\\\\\|', '|', cell)
+/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
+  text = re.sub(r'_', '\_', text) # Escape underscores in display text
+[NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+[NbConvertApp] Writing 62878 bytes to __notebook__.ipynb
+[NbConvertApp] Converting notebook __notebook__.ipynb to html
+[NbConvertApp] Writing 486664 bytes to __results__.html
