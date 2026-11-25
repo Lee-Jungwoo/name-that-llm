@@ -3,14 +3,15 @@
 n-gram 코드 셀은 v5 노트북의 셀(문체 블록이 이미 들어 있음)을 가져와 v8 변경만 더합니다. v7의 n-gram 셀이 v5 셀에서
 문체 블록만 뺀 것과 같은지 먼저 확인합니다. 나머지 셀은 v7 그대로이고, 설명 셀과 CFG만 v8에 맞게 고칩니다.
 
-사용: .venv/bin/python analysis_v8/make_v8.py            # name_that_llm_v8.ipynb를 새로 만듦
-      .venv/bin/python analysis_v8/make_v8.py "<결과 줄>"  # 첫 셀 첫 줄에 제출 결과를 붙여서 만듦
+사용: .venv/bin/python analysis_v8/make_v8.py            # name_that_llm_v8.ipynb를 새로 만듦 (첫 셀 첫 줄에 제출 결과가 들어감)
+      .venv/bin/python analysis_v8/make_v8.py "<결과 줄>"  # 결과 줄을 바꿔서 만듦 (제출 전에는 "제출 전")
 """
 import json, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-RESULT = sys.argv[1] if len(sys.argv) > 1 else "제출 전"
+RESULT = sys.argv[1] if len(sys.argv) > 1 else ("OOF BA 0.6023 (게이트 전 0.5982, n-gram 0.5016. v7은 0.5882 / 0.5868 / 0.4693) "
+                                                "· Public LB 0.563 (v7 0.556)")
 nb = json.load(open(ROOT / "name_that_llm_v7.ipynb", encoding="utf-8"))
 v5 = json.load(open(ROOT / "name_that_llm_v5.ipynb", encoding="utf-8"))
 cells = nb["cells"]
@@ -40,7 +41,7 @@ put(0, f"""> **v8 · v7 + n-gram 분기 강화 (문체 피처 27개, Open Pool �
 >
 > v7에서 바뀐 것은 n-gram 분기(3장)뿐입니다. ① v5의 문체 블록(27개, `stylo_alpha` = 0.2)을 넣고, ② n-gram용 Open Pool 표본을 라벨당 2,500개에서 5,000개로 늘리면서(`ngram_pool_per_label`) 풀 행에 라벨 균형 가중치를 줍니다(`ngram_pool_balance`). LoRA(v4 가중치 `ntl-lora-weights-v4-echo-cv`)와 DeBERTa(`ntl-deberta-v7`)는 다시 학습하지 않고, 블렌드 가중치(lora 0.6 / deb 0.2 / ng 0.2)·회사 게이트·중심화·Sinkhorn도 v7과 같습니다.
 >
-> 근거는 로컬 CPU에서 커널 fold로 잰 OOF입니다(`analysis_pool/`, `analysis_v7/whatif_ngram.py`): n-gram 0.4690 → 0.5012, 3분기 블렌드 0.5864 → 0.5982, 게이트 뒤 0.5882 → 0.6020. 두 변경을 한 번에 넣었고, OOF로는 이득의 대부분이 풀 크기에서 나옵니다. 제출 커널은 `name-that-llm-v8-pool`이고, 노트북을 만든 스크립트와 점검은 `analysis_v8/`, 기록은 EXPERIMENTS.md 실험 8에 있습니다.
+> 근거는 로컬 CPU에서 커널 fold로 잰 OOF입니다(`analysis_pool/`, `analysis_v7/whatif_ngram.py`): n-gram 0.4690 → 0.5012, 3분기 블렌드 0.5864 → 0.5982, 게이트 뒤 0.5882 → 0.6020. 제출 커널(`name-that-llm-v8-pool` 버전 1, 33.9분)에서는 n-gram 0.5016, 블렌드 0.5982, 게이트 뒤 0.6023으로 로컬 예상과 지문 1개 이내로 맞았습니다. 두 변경을 한 번에 넣었고, OOF로는 이득의 대부분이 풀 크기에서 나옵니다. 노트북을 만든 스크립트와 점검, 커널 로그는 `analysis_v8/`, 기록은 EXPERIMENTS.md 실험 8에 있습니다.
 """)
 
 # 1. 제목과 변경점
@@ -82,7 +83,7 @@ sub(4, "| 3. n-gram 모델 | 4뷰 TF-IDF + LinearSVC를 학습해 OOF 점수와 
 # 5. 실행 방법
 sub(5, "3. **Save Version**으로 전체 실행한 뒤 Submit합니다. 제출 시 숨겨진 테스트(약 4,000개)로 노트북이 다시 실행됩니다.",
     "3. **Save Version**으로 전체 실행한 뒤 Submit합니다. 제출 시 숨겨진 테스트(약 4,000개)로 노트북이 다시 실행됩니다. "
-    "v8은 n-gram 표본이 커져서 n-gram 구간이 v7(약 12분)보다 오래 걸립니다(로컬 CPU 기준 약 33분).")
+    "v8은 n-gram 표본이 커져서 n-gram 구간이 v7(약 12분)보다 오래 걸립니다(제출 커널에서 28.5분, 전체 33.9분).")
 sub(5, "name_that_llm_v7.ipynb", "name_that_llm_v8.ipynb")
 
 # 8. CFG
@@ -158,7 +159,7 @@ put(15, """## 3. n-gram 모델
 
 **train 행 가중치.** 학습 행의 대부분(88,107개)이 Open Pool이고, 실제 대회 지문인 train은 fold당 약 2,160개입니다. 가중치가 같으면 경계가 풀 분포에 맞춰집니다. 그래서 train 행에만 더 큰 가중치를 줍니다. 후보 `CFG["ngram_train_weights"]`를 모두 5-fold로 돌리고 OOF 점수가 가장 높은 값을 쓰는데, v3부터 매번 12가 뽑혀서 12만 둡니다. 풀이 커지면 train의 가중치 몫이 0.42에서 0.27로 줄지만, 몫을 맞추려고 가중치를 23.5로 올린 실행은 나아지지 않았습니다(n-gram 0.5008 → 0.4979). Open Pool이 없으면 모든 행이 train이라 가중치가 의미가 없어서 1.0만 씁니다.
 
-**메모리.** 라벨당 5,000개에서 풀 행렬의 0이 아닌 원소는 약 1.9억 개입니다. `fit_svc`는 fold마다 [train 행 + 풀 행]에 문체 블록을 붙인 행렬을 새로 조립하므로, 조립에 쓴 사본과 float32 행렬을 fit 전에 놓아 줍니다(값은 그대로이고 최대 메모리만 줄어듭니다). 로컬 CPU에서 이 셀까지의 프로세스 최대 메모리는 8.3GB였고, 놓아 주지 않으면 약 11GB입니다(추정). 셀 끝에서 최대 메모리를 출력하고, 풀 행렬은 Qwen과 DeBERTa를 올리기 전에 지웁니다.
+**메모리.** 라벨당 5,000개에서 풀 행렬의 0이 아닌 원소는 약 1.9억 개입니다. `fit_svc`는 fold마다 [train 행 + 풀 행]에 문체 블록을 붙인 행렬을 새로 조립하므로, 조립에 쓴 사본과 float32 행렬을 fit 전에 놓아 줍니다(값은 그대로이고 최대 메모리만 줄어듭니다). 이 셀까지의 프로세스 최대 메모리는 로컬 CPU에서 8.3GB, 제출 커널에서 7.9GB였고, 놓아 주지 않으면 약 11GB입니다(추정). 셀 끝에서 최대 메모리를 출력하고, 풀 행렬은 Qwen과 DeBERTa를 올리기 전에 지웁니다.
 
 **로컬 점검.** 이 셀을 로컬 CPU에서 커널 fold로 그대로 실행하면 표본·행렬·가중치와 5개 fold의 OOF 점수가 풀 크기 실험의 값과 비트 단위로 같습니다(n-gram OOF 0.5012, `analysis_v8/verify_v8.py`, 로그는 `analysis_v8/logs/`).
 """)
