@@ -1,0 +1,5 @@
+W rows 230950 sep 1 len pct 50/90/99/max [261.0, 513.0, 643.0] 769 | truncated(=max) 39
+W batches 57738 width pct 50/90/99/max [263.0, 521.0, 675.0] 769 | batches at max width 38
+W first 828 micro-batches: max width 739 n at global max 0 | first index at max 1898
+W mean width 296.9904395718591 mean width first 828 292.82608695652175 | 114s
+W train len pct 50/90/99/max [261.0, 521.0, 633.04] 763

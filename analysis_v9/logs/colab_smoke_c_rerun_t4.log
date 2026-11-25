@@ -1,0 +1,65 @@
+Input Notebook:  v9_smokeB.ipynb
+Output Notebook: /content/out/v9_smokeB_executed.ipynb
+Executing notebook with kernel: python3
+Executing Cell 1---------------------------------------
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning:
+
+Open Pool: 115MB
+Stage 1 가중치가 있습니다. Stage 1을 건너뛰고 Stage 2부터 합니다.
+
+Ending Cell 1------------------------------------------
+Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+
+Ending Cell 3------------------------------------------
+Executing Cell 4---------------------------------------
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+
+프롬프트 그룹 KFold BA: 0.3145
+
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+device=cuda:0, base=/content/models/Qwen3-4B-Base, LoRA 실행=True
+
+GPU: Tesla T4 | capability (7, 5) | torch 2.14.1+cu130 | transformers 5.22.1 | 정밀도 fp16 + GradScaler
+
+LoRA 층 72개, 학습 파라미터 6,256,658개, 깊이 [2, 4, 6, 9, 12, 15, 18]
+저장된 Stage 1 가중치를 사용합니다: /content/out/ntl_lora_v9_stage1.pt
+
+stage1 fold 0 BA: 0.1907 | 2.8분
+fold 0: 저장된 가중치 /content/out/ntl_lora_v9_fold0.pt를 사용합니다.
+
+fold 0: LoRA BA 0.2389 | 3.6분
+fold 1: 저장된 가중치 /content/out/ntl_lora_v9_fold1.pt를 사용합니다.
+
+fold 1: LoRA BA 0.2407 | 4.4분
+fold 2: 저장된 가중치 /content/out/ntl_lora_v9_fold2.pt를 사용합니다.
+
+fold 2: LoRA BA 0.2685 | 5.2분
+fold 3: 저장된 가중치 /content/out/ntl_lora_v9_fold3.pt를 사용합니다.
+
+fold 3: LoRA BA 0.2683 | 5.9분
+fold 4: 저장된 가중치 /content/out/ntl_lora_v9_fold4.pt를 사용합니다.
+
+fold 4: LoRA BA 0.2611 | 6.8분
+저장된 전체 학습 가중치를 사용합니다: /content/out/ntl_lora_v9_full.pt
+
+테스트 로짓: train 전체로 학습한 모델 1개
+LoRA OOF BA: 0.2553 (fold 0: 0.2389) | 6.8분
+저장: /content/out/ntl_lora_v9_oof.npz
+
+== LORA RUN DONE == 6.8분
+
+Ending Cell 7------------------------------------------

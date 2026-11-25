@@ -205,7 +205,8 @@ sub(18, '''    labels = torch.tensor(np.array(labels), dtype=torch.long)
         assert not missing.unexpected_keys, missing.unexpected_keys
         optim.load_state_dict(ck["optim"])
         sched.load_state_dict(ck["sched"])
-        scaler.load_state_dict(ck["scaler"])
+        if ck["scaler"] and scaler.is_enabled():  # bf16(L4, A100)에서는 스케일러를 쓰지 않아 상태가 비어 있음. GPU 종류가 바뀌어도 이어 할 수 있게 함
+            scaler.load_state_dict(ck["scaler"])
         resume_epoch, resume_bi = ck["epoch"], ck["bi"]
         step, skipped, running = ck["step"], ck["skipped"], ck["running"]
         print(f"[{name}] 체크포인트에서 이어 하기: {step}/{n_steps} 스텝 (epoch {resume_epoch}, 마이크로 배치 {resume_bi}부터), "
@@ -276,6 +277,11 @@ sub(18, '''    for k, (a, b) in enumerate(cv_folds):
                         CFG["stage2_epochs"], CFG["stage2_lr"], CFG["stage2_budget_h"], f"stage2-fold{k}")
             torch.save({"state": trainable_state(model), "cfg": CFG, "labels": LABELS}, WORK_DIR / FOLD_FILES[k])''')
 sub(18, '''        load_lora(model, WORK_DIR / "ntl_lora_stage1.pt")''', '''        load_lora(model, WORK_DIR / STAGE1_FILE)''')
+sub(18, '''    saved = find_optional(FULL_FILE)
+    if saved is not None:''', '''    saved = find_optional(FULL_FILE)
+    if saved is None and (WORK_DIR / FULL_FILE).exists():  # v9: 이어 하기. 이 실행 폴더에 이미 저장된 전체 학습 가중치도 다시 학습하지 않음
+        saved = WORK_DIR / FULL_FILE
+    if saved is not None:''')
 s18 = get(18)
 s18 += '''
 

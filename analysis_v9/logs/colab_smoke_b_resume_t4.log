@@ -1,0 +1,82 @@
+Input Notebook:  v9_smokeB.ipynb
+Output Notebook: /content/out/v9_smokeB_executed.ipynb
+Executing notebook with kernel: python3
+Executing Cell 1---------------------------------------
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning:
+
+Open Pool: 115MB
+Stage 1 체크포인트가 있습니다. 그 자리에서 이어 합니다.
+
+Ending Cell 1------------------------------------------
+Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+
+Ending Cell 3------------------------------------------
+Executing Cell 4---------------------------------------
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+
+프롬프트 그룹 KFold BA: 0.3145
+
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+device=cuda:0, base=/content/models/Qwen3-4B-Base, LoRA 실행=True
+
+GPU: Tesla T4 | capability (7, 5) | torch 2.14.1+cu130 | transformers 5.22.1 | 정밀도 fp16 + GradScaler
+
+LoRA 층 72개, 학습 파라미터 6,256,658개, 깊이 [2, 4, 6, 9, 12, 15, 18]
+
+Stage 1: 출처의 프롬프트 id가 train prompt_id와 같은 풀 행 86개를 뺍니다.
+Stage 1 행 가중치(라벨 균형): 최소 0.545 / 최대 3.623 / 평균 1.000 | 라벨별 가중치 합 12,830.6 ~ 12,830.6
+Stage 1 데이터 (full): 230,950행 | 라벨별 최소 3,541 / 최대 23,537 | gpt-5.5 14,315, gpt-5.6-luna 18,874, gpt-5.6-sol 14,720, gpt-5.6-terra 15,697, gpt-6-astra 11,841, gemini-3.1-pro-preview 10,513, gemini-3.6-flash 18,447, gemini-3.7-flash 3,541, gemini-3.8-flash 23,537, claude-fable-5 12,764, claude-opus-4-6 11,168, claude-opus-4-8 12,158, claude-opus-5 9,880, claude-sonnet-5 13,218, qwen3.8-max 4,566, glm-5.3 12,450, glm-5.3-flash 12,745, kimi-k3 10,516
+
+[stage1] 체크포인트에서 이어 하기: 300/28869 스텝 (epoch 0, 마이크로 배치 600부터), loss 2.865
+
+[stage1] 체크포인트 저장: 359/28869 스텝 | 1.5분
+
+[stage1] 시간 예산 도달, 414/28869 스텝에서 중단
+
+Stage 1 GPU 메모리 최대 사용량: 12.6GB
+
+stage1 fold 0 BA: 0.1907 | 6.6분
+
+[stage2-fold0] 시간 예산 도달, 47/540 스텝에서 중단
+
+fold 0: LoRA BA 0.2389 | 8.6분
+
+[stage2-fold1] 시간 예산 도달, 47/540 스텝에서 중단
+
+fold 1: LoRA BA 0.2407 | 10.6분
+
+[stage2-fold2] 시간 예산 도달, 47/540 스텝에서 중단
+
+fold 2: LoRA BA 0.2685 | 12.7분
+
+[stage2-fold3] 시간 예산 도달, 44/540 스텝에서 중단
+
+fold 3: LoRA BA 0.2683 | 14.7분
+
+[stage2-fold4] 시간 예산 도달, 47/540 스텝에서 중단
+
+fold 4: LoRA BA 0.2611 | 16.7분
+
+[stage2-full] 시간 예산 도달, 43/676 스텝에서 중단
+
+테스트 로짓: train 전체로 학습한 모델 1개
+LoRA OOF BA: 0.2553 (fold 0: 0.2389) | 17.9분
+저장: /content/out/ntl_lora_v9_oof.npz
+
+== LORA RUN DONE == 17.9분
+
+Ending Cell 7------------------------------------------
