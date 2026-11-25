@@ -285,7 +285,7 @@ groups = train.prompt_id.values                       # fold를 나눌 묶음
 | `ntl-lora-weights-pool` | LoRA 가중치 | v2 |
 | `ntl-lora-weights-v3` | LoRA 가중치 | v3 |
 | `blkbeansoymilk/ntl-lora-weights-v4-echo-cv` | `ntl_lora_fold0.pt` ~ `fold4.pt`, `ntl_lora_full.pt` (개당 약 25MB). 서버의 `data/weights_v4/`와 같은 파일 | v4, v5, v6, v7 |
-| `blkbeansoymilk/ntl-deberta-v7` | DeBERTa OOF와 가중치, 토크나이저. v7 커널 메타데이터에 입력으로 적혀 있으나 만들어졌는지는 확인하지 못함 | v7 (예정) |
+| `blkbeansoymilk/ntl-deberta-v7` | DeBERTa OOF와 가중치, 토크나이저 | v7 |
 
 함께 붙이는 사전학습 모델은 Kaggle 모델 `qwen-lm/qwen-3`(Transformers, `4b-base`)이고, Colab에서는 Hugging Face의 `Qwen/Qwen3-4B-Base`를 받습니다. 데이터셋 이름은 [EXPERIMENTS.md](../EXPERIMENTS.md)의 "재현용 파일"과 커널 메타데이터([analysis_v6/kernel/kernel-metadata.json](../analysis_v6/kernel/kernel-metadata.json))에서 가져왔습니다.
 
@@ -297,7 +297,7 @@ groups = train.prompt_id.values                       # fold를 나눌 묶음
 - **v2**: Open Pool을 처음 썼습니다(223,840개).
 - **v3, v4**: 풀이 226,191개로 갱신된 뒤 실행했습니다.
 - **v5**: 풀이 231,036개로 갱신된 뒤 실행해서, v4와 비교할 기준선을 새 풀로 다시 쟀습니다.
-- **v6**: 문서의 수치는 옛 풀(226,191개) 시점의 v4 OOF로 계산했고, 아직 제출하지 않았습니다.
+- **v6**: 제출 전 분석은 옛 풀(226,191개) 시점의 v4 OOF로 했고, 제출 커널은 새 풀(231,036개)에서 돌았습니다.
 - **v7**: Open Pool 표본을 세 번째 분기(DeBERTa)의 Stage 1에도 씁니다(`deb_pool_per_label`, LoRA와 같은 seed라 같은 표본).
 - **train 행 가중치**: n-gram 분기에서 train 지문과 풀 지문의 무게를 다르게 주는 것은 v3부터입니다.
 - **Response Corpus**: v5의 n-gram 설정 위에서 시험했고 어느 버전에도 넣지 않았습니다.

@@ -6,6 +6,9 @@ v1부터 v7까지 버전마다 무엇을 바꿨고, 그 변경이 검증 점수�
 
 모든 버전에 공통인 구조는 이 문서에서 반복하지 않습니다. 데이터는 [01_datasets.md](01_datasets.md), fold 분할은 [02_fold_split.md](02_fold_split.md), 모델 구조는 [03_model_architecture.md](03_model_architecture.md), 실험 방법은 [04_experiment_method.md](04_experiment_method.md)에 있습니다.
 
+> [!IMPORTANT]
+> **이 문서는 2026-11-25 02:32 KST 시점(v5까지 제출) 기준입니다.** 그 뒤 v6(Public LB 0.552)과 v7(Public LB 0.556)이 제출됐고, 이 문서의 v6·v7 관련 내용("미제출", 7장의 진행 상태, 4장의 기여 분해)에는 아직 반영되지 않았습니다. 제출 결과는 [EXPERIMENTS.md](../EXPERIMENTS.md)의 실험 6·7에, v7 기준 회사별 혼동 행렬은 [06_company_confusion.md](06_company_confusion.md)에 있습니다.
+
 > [!NOTE]
 > **수치 기준**
 > - 검증 수치는 따로 적지 않으면 [EXPERIMENTS.md](../EXPERIMENTS.md)와 같은 **제출 커널(Kaggle T4) 로그** 기준입니다.
