@@ -72,8 +72,8 @@ sub(3, "| Data | Open Pool, up to 2,500 per label (`match_weight` sampling), tra
 
 # 5. 실행 방법
 sub(5, "LoRA 가중치 데이터셋 `ntl-lora-weights-v4-echo-cv`", "LoRA 가중치 데이터셋(v9 학습 결과, 아래 표의 파일)")
-sub(5, "v8은 n-gram 표본이 커져서 n-gram 구간이 v7(약 12분)보다 오래 걸립니다(로컬 CPU 기준 약 33분).",
-    "n-gram 구간은 v8과 같이 약 33분입니다(로컬 CPU 기준).")
+sub(5, "v8은 n-gram 표본이 커져서 n-gram 구간이 v7(약 12분)보다 오래 걸립니다(제출 커널에서 28.5분, 전체 33.9분).",
+    "n-gram 구간은 v8과 같습니다(v8 제출 커널에서 28.5분, 전체 33.9분).")
 sub(5, "| LoRA | `ntl_lora_fold0.pt` ~ `ntl_lora_fold4.pt` (+ `ntl_lora_full.pt`) | 개당 약 25MB |",
     "| LoRA (v9) | `ntl_lora_v9_fold0.pt` ~ `ntl_lora_v9_fold4.pt`, `ntl_lora_v9_full.pt` | 개당 약 25MB |")
 sub(5, """**Colab (DeBERTa 학습용)**
@@ -276,7 +276,11 @@ sub(18, '''    for k, (a, b) in enumerate(cv_folds):
             train_stage(model, tok, device, train.text.values[a].tolist(), y[a],
                         CFG["stage2_epochs"], CFG["stage2_lr"], CFG["stage2_budget_h"], f"stage2-fold{k}")
             torch.save({"state": trainable_state(model), "cfg": CFG, "labels": LABELS}, WORK_DIR / FOLD_FILES[k])''')
-sub(18, '''        load_lora(model, WORK_DIR / "ntl_lora_stage1.pt")''', '''        load_lora(model, WORK_DIR / STAGE1_FILE)''')
+sub(18, '''        load_lora(model, WORK_DIR / "ntl_lora_stage1.pt")''',
+    '''        # v9: fold 가중치를 입력 데이터셋에서 읽은 실행(cv_from_saved)에서는 Stage 1 가중치가 실행 폴더가 아니라 입력에 있음
+        stage1_path = WORK_DIR / STAGE1_FILE if (WORK_DIR / STAGE1_FILE).exists() else find_optional(STAGE1_FILE)
+        assert stage1_path is not None, f"{STAGE1_FILE}가 없어 전체 학습 모델을 만들 수 없습니다."
+        load_lora(model, stage1_path)''')
 sub(18, '''    saved = find_optional(FULL_FILE)
     if saved is not None:''', '''    saved = find_optional(FULL_FILE)
     if saved is None and (WORK_DIR / FULL_FILE).exists():  # v9: 이어 하기. 이 실행 폴더에 이미 저장된 전체 학습 가중치도 다시 학습하지 않음
