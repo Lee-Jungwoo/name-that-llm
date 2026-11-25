@@ -1,0 +1,80 @@
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+프롬프트 그룹 KFold BA: 0.3145
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+특성 수: 493279 | 4.0분
+문체 피처 27개, alpha=0.2 | 4.8분
+풀 표본 88,107행 (라벨당 최대 5,000개) | 라벨별 [5000, 5000, 5000, 5000, 5000, 5000, 5000, 3541, 5000, 5000, 5000, 5000, 5000, 5000, 4566, 5000, 5000, 5000]
+  5,000개에 못 미치는 라벨: {'gemini-3.7-flash': 3541, 'qwen3.8-max': 4566}
+풀 행 가중치 (라벨 균형 켬): 최소 0.9790 / 최대 1.3823 / 평균 1.0000 | 라벨별 가중치 합 최소 4,894.8 / 최대 4,894.8
+train 가중치 12.0: OOF BA 0.5016 (fold별 [0.48, 0.533, 0.515, 0.5, 0.48]) | 23.4분
+선택한 train 가중치: 12.0 -> n-gram OOF BA: 0.5016
+n-gram 구간까지 프로세스 최대 메모리(RSS): 7.8GB | 27.1분
+device=cuda:0, base=/kaggle/input/models/qwen-lm/qwen-3/transformers/4b-base/1, LoRA 실행=True
+LoRA 층 72개, 학습 파라미터 6,256,658개, 깊이 [2, 4, 6, 9, 12, 15, 18]
+저장된 fold 가중치를 사용합니다: ['/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold0.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold1.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold2.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold3.pt', '/kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_fold4.pt']
+저장된 전체 학습 가중치를 사용합니다: /kaggle/input/datasets/blkbeansoymilk/ntl-lora-weights-v9-fullpool/ntl_lora_v9_full.pt
+테스트 로짓: train 전체로 학습한 모델 1개
+LoRA OOF BA: 0.6072 (fold 0: 0.5870) | 31.5분
+저장: ntl_lora_v9_oof.npz
+DeBERTa 폴더=/kaggle/input/datasets/blkbeansoymilk/ntl-deberta-v7/ntl_deb_base, 실행=True
+DeBERTa: /kaggle/input/datasets/blkbeansoymilk/ntl-deberta-v7/ntl_deb_base | 파라미터 434,030,610개 (전부 학습) | 연산 정밀도 torch.float32 | 풀링 mean
+저장된 DeBERTa 결과를 사용합니다: /kaggle/input/datasets/blkbeansoymilk/ntl-deberta-v7/ntl_deb_oof.npz ['/kaggle/input/datasets/blkbeansoymilk/ntl-deberta-v7/ntl_deb_full.pt']
+테스트 로짓: train 전체로 학습한 모델 1개
+DeBERTa OOF BA: 0.5053 (fold 0: 0.5000) | 32.0분
+DeBERTa 구간 GPU 메모리 최대 사용량: 1.7GB
+n-gram 온도: 0.2
+LoRA 온도: 1
+DeBERTa 온도: 1
+   ng 단독 OOF BA 0.5016 (fold 0: 0.4796)
+ lora 단독 OOF BA 0.6072 (fold 0: 0.5870)
+  deb 단독 OOF BA 0.5053 (fold 0: 0.5000)
+LoRA와 DeBERTa의 1순위가 다른 지문 43.0% | 정확도: LoRA 60.7%, DeBERTa 50.5%, 둘 중 하나라도 맞힘 70.1%
+  OOF BA 0.6190 | lora=0.8, deb=0.2, ng=0.0
+  OOF BA 0.6190 | lora=0.8, deb=0.1, ng=0.1
+  OOF BA 0.6186 | lora=0.7, deb=0.1, ng=0.2
+  OOF BA 0.6183 | lora=0.5, deb=0.3, ng=0.2
+  OOF BA 0.6183 | lora=0.5, deb=0.2, ng=0.3
+  (v6 가중치 lora=0.6, deb=0.0, ng=0.4: OOF BA 0.6105)
+고정한 가중치: ng=0.2, lora=0.6, deb=0.2
+최종 검증 BA (OOF, n=2699): 0.6164 | fold 0만 (v3과 비교용): 0.5944
+게이트 입력 분기: n-gram, LoRA, DeBERTa
+[gpt] 회사 안 정확도 블렌드 0.668, 특화 분류기 0.675 | alpha 0.75 사용, alpha별 OOF BA {0: 0.6164, 0.25: 0.6201, 0.5: 0.6197, 0.75: 0.6186, 1.0: 0.6201}
+[gemini] 회사 안 정확도 블렌드 0.680, 특화 분류기 0.657 | alpha 0.25 사용, alpha별 OOF BA {0: 0.6186, 0.25: 0.6201, 0.5: 0.6186, 0.75: 0.6179, 1.0: 0.6146}
+[claude] 회사 안 정확도 블렌드 0.760, 특화 분류기 0.758 | alpha 0.5 사용, alpha별 OOF BA {0: 0.6201, 0.25: 0.6223, 0.5: 0.6223, 0.75: 0.6216, 1.0: 0.6205}
+[glm] 회사 안 정확도 블렌드 0.593, 특화 분류기 0.600 | alpha 1.0 사용, alpha별 OOF BA {0: 0.6223, 0.25: 0.6227, 0.5: 0.6235, 0.75: 0.6227, 1.0: 0.6231}
+OOF BA: 블렌드 0.6164 -> 게이트 0.6231 | OOF에서 바뀐 지문 164개, 테스트에서 바뀐 지문 1개 / 3개
+오답 중 같은 연구소 모델로 틀린 비율: 59.7%
+테스트 묶음 3개, 중심화 대상 지문 0개 / 3개
+[블렌드 OOF] n=2699, 균등이면 클래스당 150개
+  rho=0.0 : BA 0.6231 | 클래스별 예측 수 최소 102 / 최대 177
+  rho=0.35: BA 0.6238 | 클래스별 예측 수 최소 104 / 최대 175  <- 사용
+  rho=0.7 : BA 0.6253 | 클래스별 예측 수 최소 104 / 최대 173
+  rho=1.0 : BA 0.6242 | 클래스별 예측 수 최소 107 / 최대 171
+[n-gram OOF] n=2699, 균등이면 클래스당 150개
+  rho=0.0 : BA 0.5016 | 클래스별 예측 수 최소 90 / 최대 229
+  rho=0.35: BA 0.5034 | 클래스별 예측 수 최소 99 / 최대 212  <- 사용
+  rho=0.7 : BA 0.5060 | 클래스별 예측 수 최소 107 / 최대 187
+  rho=1.0 : BA 0.5053 | 클래스별 예측 수 최소 112 / 최대 171
+테스트 지문 3개 < 200개라 테스트에는 적용하지 않습니다.
+model
+claude-sonnet-5           1
+gpt-5.5                   1
+gemini-3.1-pro-preview    1
+submission.parquet 저장 완료: (3, 2) | 총 32.1분
+/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
+  cells[i][c] = re.sub('\\\\\|', '|', cell)
+/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
+  text = re.sub(r'_', '\_', text) # Escape underscores in display text
+[NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+[NbConvertApp] Writing 409733 bytes to __notebook__.ipynb
+[NbConvertApp] Converting notebook __notebook__.ipynb to html
+[NbConvertApp] Support files will be in __results___files/
+[NbConvertApp] Making directory __results___files
+[NbConvertApp] Making directory __results___files
+[NbConvertApp] Writing 751755 bytes to __results__.html

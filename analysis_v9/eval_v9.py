@@ -167,3 +167,18 @@ print(f"  게이트 뒤: v9 OOF 최고 - v8 고정      : {ba(a['gate_fixed']):.
 print(f"  v9 안에서: OOF 최고 - 고정 (블렌드)   : {paired(b['preds'][int(b['scores'].argmax())], b['fixed'])}")
 print(f"  v9 안에서: nested - 고정 (블렌드)     : {paired(b['nested'], b['fixed'])}")
 print(f"  v9 안에서: OOF 최고 - 고정 (게이트 뒤): {paired(b['gate_best'], b['gate_fixed'])}")
+
+print("\n== 블렌드(고정 가중치)에서 바뀐 지문과 라벨별 recall: v8 제출 -> v9")
+print(f"블렌드 예측이 바뀐 지문 {(a['fixed'] != b['fixed']).sum()}개 | 고침 {((a['fixed'] != y) & (b['fixed'] == y)).sum()}개, 망침 {((a['fixed'] == y) & (b['fixed'] != y)).sum()}개 | "
+      f"게이트 뒤: 바뀜 {(a['gate_fixed'] != b['gate_fixed']).sum()}개, 고침 {((a['gate_fixed'] != y) & (b['gate_fixed'] == y)).sum()}개, 망침 {((a['gate_fixed'] == y) & (b['gate_fixed'] != y)).sum()}개")
+print(f"오답 중 같은 연구소 모델로 틀린 비율(게이트 뒤): " + ", ".join(
+    f"{n} {np.mean([any(p in FAMILIES[f] and t in FAMILIES[f] for f in FAMILIES) for p, t in zip(r['gate_fixed'][r['gate_fixed'] != y], y[r['gate_fixed'] != y])]):.1%}"
+    for n, r in (("v8", a), ("v9", b))))
+print("라벨: LoRA 단독 | 3분기 블렌드 | 게이트 뒤")
+for k, name in enumerate(LABELS):
+    m = y == k
+    rc = lambda p: (p[m] == k).mean()
+    print(f"  {name:<24} {rc(p4):.3f} -> {rc(p9):.3f} | {rc(a['fixed']):.3f} -> {rc(b['fixed']):.3f} | {rc(a['gate_fixed']):.3f} -> {rc(b['gate_fixed']):.3f} ({rc(b['gate_fixed']) - rc(a['gate_fixed']):+.3f})")
+print(f"2분기(DeBERTa 없음) lora 0.6 / ng 0.4: v8 {ba(a['blend'](dict(lora=0.6, ng=0.4)).argmax(1)):.4f} -> v9 {ba(b['blend'](dict(lora=0.6, ng=0.4)).argmax(1)):.4f} | "
+      f"v9에서 DeBERTa의 몫(고정 3분기 - 2분기): {paired(b['fixed'], b['blend'](dict(lora=0.6, ng=0.4)).argmax(1))}")
+print(f"v9에서 n-gram의 몫(고정 3분기 - lora 0.8 / deb 0.2): {paired(b['fixed'], b['blend'](dict(lora=0.8, deb=0.2)).argmax(1))}")
