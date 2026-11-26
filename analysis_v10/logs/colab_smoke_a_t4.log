@@ -1,0 +1,129 @@
+Input Notebook:  v10_smoke.ipynb
+Output Notebook: /content/out/v10_smoke_executed.ipynb
+/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  _validate(nbdict, ref, version, version_minor, relax_add_props)
+Executing notebook with kernel: python3
+Executing Cell 1---------------------------------------
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning: 
+Error while fetching `HF_TOKEN` secret value from your vault: 'Requesting secret HF_TOKEN timed out. Secrets can only be fetched when running from the Colab UI.'.
+  warnings.warn(f"\nError while fetching `HF_TOKEN` secret value from your vault: '{str(e)}'.")
+
+Downloading bytes:           |  0.00B            
+Reconstructing (incomplete total...): |          |  0.00B /  0.00B            
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+Open Pool: 115MB, md5 10d1c13b5a9f9a8c3c2cf64a1d4508b8 (고정판)
+v10: DeBERTa Stage 1을 Open Pool 전체로 처음부터 학습합니다(Colab 세션은 8시간에서 끊기므로 이어 하기가 필요할 수 있음).
+
+Ending Cell 1------------------------------------------
+Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+
+Ending Cell 3------------------------------------------
+Executing Cell 4---------------------------------------
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+
+프롬프트 그룹 KFold BA: 0.3145
+
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+device=cuda:0, base=None, LoRA 실행=False
+LoRA를 건너뜁니다. GPU와 Qwen3 입력을 확인하세요. n-gram만으로 제출 파일을 만듭니다.
+
+Ending Cell 7------------------------------------------
+Executing Cell 8---------------------------------------
+Ending Cell 8------------------------------------------
+Executing Cell 9---------------------------------------
+DeBERTa 폴더=/content/models/deberta-v3-large, 실행=True
+
+GPU: Tesla T4 | capability (7, 5) | torch 2.14.1+cu130 | transformers 5.22.1 | deb_amp auto | grad ckpt True
+
+/usr/local/lib/python3.13/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]
+DeBERTa: /content/models/deberta-v3-large | 파라미터 434,030,610개 (전부 학습) | 연산 정밀도 torch.float16 | 풀링 mean
+DeBERTa Stage 1: 출처의 프롬프트 id가 train prompt_id와 같은 풀 행 0개를 뺍니다.
+DeBERTa Stage 1 행 가중치(라벨 균형): 최소 1.000 / 최대 1.000 / 평균 1.000
+DeBERTa Stage 1 데이터 (sample): 720행 | 라벨별 최소 40 / 최대 40
+
+[deb-stage1] val 0/45: loss 2.9895, BA 0.0517 (train loss 0.000) | 0.5분
+
+[deb-stage1] 1/45 loss 3.108 | 0.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 2/45 loss 3.110 | 0.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 3/45 loss 3.108 | 0.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 4/45 loss 3.104 | 0.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 5/45 loss 3.095 | 0.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 6/45 loss 3.095 | 0.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 7/45 loss 3.083 | 0.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 8/45 loss 3.081 | 0.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 9/45 loss 3.080 | 0.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] val 9/45: loss 2.9261, BA 0.0633 (train loss 3.080) | 1.2분
+
+[deb-stage1] 체크포인트 저장: 9/45 스텝 | 1.6분
+
+[deb-stage1] 시간 예산 도달: 9/45 스텝에서 체크포인트를 저장하고 멈춤 | 2.5분
+
+/usr/local/lib/python3.13/dist-packages/IPython/core/interactiveshell.py:3561: UserWarning: To exit: use 'exit', 'quit', or Ctrl-D.
+  warn("To exit: use 'exit', 'quit', or Ctrl-D.", stacklevel=1)
+
+Ending Cell 9------------------------------------------
+Traceback (most recent call last):
+  File "/usr/local/bin/papermill", line 6, in <module>
+    sys.exit(papermill())
+             ~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/dist-packages/click/core.py", line 1631, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/click/core.py", line 1552, in main
+    rv = self.invoke(ctx)
+  File "/usr/local/lib/python3.13/dist-packages/click/core.py", line 1415, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/click/core.py", line 910, in invoke
+    return callback(*args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/click/decorators.py", line 34, in new_func
+    return f(get_current_context(), *args, **kwargs)
+  File "/usr/local/lib/python3.13/dist-packages/papermill/cli.py", line 235, in papermill
+    execute_notebook(
+    ~~~~~~~~~~~~~~~~^
+        input_path=input_path,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<15 lines>...
+        execution_timeout=execution_timeout,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/dist-packages/papermill/execute.py", line 131, in execute_notebook
+    raise_for_execution_errors(nb, output_path)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/dist-packages/papermill/execute.py", line 251, in raise_for_execution_errors
+    raise error
+papermill.exceptions.PapermillExecutionError: 
+---------------------------------------------------------------------------
+Exception encountered at "In [9]":
+An exception has occurred, use %tb to see the full traceback.
+
+SystemExit: DeBERTa Stage 1이 끝나지 않았습니다. 체크포인트(ntl_deb_v10_stage1_ckpt.pt)에서 이어 하세요.
+
+

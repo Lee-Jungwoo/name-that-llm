@@ -1,0 +1,237 @@
+Input Notebook:  v10_deb.ipynb
+Output Notebook: /content/out/v10_deb_executed.ipynb
+/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  _validate(nbdict, ref, version, version_minor, relax_add_props)
+Executing notebook with kernel: python3
+Executing Cell 1---------------------------------------
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning: 
+Error while fetching `HF_TOKEN` secret value from your vault: 'Requesting secret HF_TOKEN timed out. Secrets can only be fetched when running from the Colab UI.'.
+  warnings.warn(f"\nError while fetching `HF_TOKEN` secret value from your vault: '{str(e)}'.")
+
+Downloading bytes:           |  0.00B            
+Reconstructing (incomplete total...): |          |  0.00B /  0.00B            
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+Open Pool: 115MB, md5 10d1c13b5a9f9a8c3c2cf64a1d4508b8 (고정판)
+v10: DeBERTa Stage 1을 Open Pool 전체로 처음부터 학습합니다(Colab 세션은 8시간에서 끊기므로 이어 하기가 필요할 수 있음).
+
+Ending Cell 1------------------------------------------
+Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+
+Ending Cell 3------------------------------------------
+Executing Cell 4---------------------------------------
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+
+프롬프트 그룹 KFold BA: 0.3145
+
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+device=cuda:0, base=None, LoRA 실행=False
+LoRA를 건너뜁니다. GPU와 Qwen3 입력을 확인하세요. n-gram만으로 제출 파일을 만듭니다.
+
+Ending Cell 7------------------------------------------
+Executing Cell 8---------------------------------------
+Ending Cell 8------------------------------------------
+Executing Cell 9---------------------------------------
+DeBERTa 폴더=/content/models/deberta-v3-large, 실행=True
+
+GPU: Tesla T4 | capability (7, 5) | torch 2.14.1+cu130 | transformers 5.22.1 | deb_amp auto | grad ckpt True
+
+/usr/local/lib/python3.13/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]
+DeBERTa: /content/models/deberta-v3-large | 파라미터 434,030,610개 (전부 학습) | 연산 정밀도 torch.float16 | 풀링 mean
+
+DeBERTa Stage 1: 출처의 프롬프트 id가 train prompt_id와 같은 풀 행 86개를 뺍니다.
+DeBERTa Stage 1 행 가중치(라벨 균형): 최소 0.545 / 최대 3.623 / 평균 1.000
+DeBERTa Stage 1 데이터 (full): 230,950행 | 라벨별 최소 3,541 / 최대 23,537
+
+[deb-stage1] val 0/14435: loss 3.0205, BA 0.0544 (train loss 0.000) | 0.5분
+
+[deb-stage1] 288/14435 loss 2.497 | 5.6분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] val 481/14435: loss 1.9871, BA 0.2301 (train loss 2.178) | 9.5분
+
+[deb-stage1] 576/14435 loss 2.091 | 11.3분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] 864/14435 loss 2.093 | 16.4분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] val 962/14435: loss 1.9314, BA 0.2798 (train loss 1.971) | 18.7분
+
+[deb-stage1] 1152/14435 loss 1.952 | 22.1분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] 1440/14435 loss 1.909 | 27.2분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] val 1443/14435: loss 1.9390, BA 0.3068 (train loss 1.939) | 27.7분
+
+[deb-stage1] 체크포인트 저장: 1594/14435 스텝 | 31.1분
+
+[deb-stage1] 1728/14435 loss 1.949 | 33.7분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] val 1924/14435: loss 1.6637, BA 0.3537 (train loss 1.842) | 37.8분
+
+[deb-stage1] 2016/14435 loss 1.807 | 39.5분 | 건너뜀 0, fp16 overflow 2, scale 16384
+
+[deb-stage1] 2304/14435 loss 1.766 | 44.6분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] val 2405/14435: loss 1.5880, BA 0.3999 (train loss 1.810) | 46.9분
+
+[deb-stage1] 2592/14435 loss 1.769 | 50.3분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] 2880/14435 loss 1.621 | 55.4분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] val 2886/14435: loss 1.4677, BA 0.4505 (train loss 1.688) | 56.0분
+
+[deb-stage1] 3168/14435 loss 1.711 | 61.0분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] 체크포인트 저장: 3174/14435 스텝 | 61.6분
+
+[deb-stage1] val 3367/14435: loss 1.5788, BA 0.4038 (train loss 1.610) | 65.8분
+
+[deb-stage1] 3456/14435 loss 1.638 | 67.5분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] 3744/14435 loss 1.602 | 72.7분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] val 3848/14435: loss 1.4444, BA 0.4583 (train loss 1.583) | 75.0분
+
+[deb-stage1] 4032/14435 loss 1.591 | 78.3분 | 건너뜀 0, fp16 overflow 2, scale 32768
+
+[deb-stage1] 4320/14435 loss 1.617 | 83.4분 | 건너뜀 0, fp16 overflow 2, scale 65536
+
+[deb-stage1] val 4329/14435: loss 1.4388, BA 0.4605 (train loss 1.586) | 84.1분
+
+[deb-stage1] 4608/14435 loss 1.502 | 89.0분 | 건너뜀 0, fp16 overflow 2, scale 65536
+
+[deb-stage1] 체크포인트 저장: 4749/14435 스텝 | 92.0분
+
+[deb-stage1] val 4810/14435: loss 1.3841, BA 0.4961 (train loss 1.512) | 93.7분
+
+[deb-stage1] 4896/14435 loss 1.479 | 95.3분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] 5184/14435 loss 1.515 | 100.7분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] val 5291/14435: loss 1.4618, BA 0.4604 (train loss 1.524) | 103.1분
+
+[deb-stage1] 5472/14435 loss 1.430 | 106.4분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] 5760/14435 loss 1.563 | 111.5분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] val 5772/14435: loss 1.3953, BA 0.4724 (train loss 1.557) | 112.2분
+
+[deb-stage1] 6048/14435 loss 1.451 | 117.2분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] val 6253/14435: loss 1.3780, BA 0.4846 (train loss 1.541) | 121.4분
+
+[deb-stage1] 체크포인트 저장: 6290/14435 스텝 | 122.7분
+
+[deb-stage1] 6336/14435 loss 1.462 | 123.5분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] 6624/14435 loss 1.495 | 129.0분 | 건너뜀 0, fp16 overflow 3, scale 32768
+
+[deb-stage1] val 6734/14435: loss 1.2709, BA 0.5115 (train loss 1.491) | 131.5분
+
+[deb-stage1] 6912/14435 loss 1.515 | 134.6분 | 건너뜀 0, fp16 overflow 4, scale 32768
+
+[deb-stage1] 7200/14435 loss 1.436 | 139.7분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] val 7215/14435: loss 1.3668, BA 0.4858 (train loss 1.466) | 140.5분
+
+[deb-stage1] 7488/14435 loss 1.447 | 145.4분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] val 7696/14435: loss 1.3101, BA 0.4995 (train loss 1.466) | 149.5분
+
+[deb-stage1] 7776/14435 loss 1.393 | 151.0분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] 체크포인트 저장: 7872/14435 스텝 | 153.2분
+
+[deb-stage1] 8064/14435 loss 1.514 | 156.9분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] val 8177/14435: loss 1.2819, BA 0.5194 (train loss 1.397) | 159.5분
+
+[deb-stage1] 8352/14435 loss 1.444 | 162.6분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] 8640/14435 loss 1.397 | 167.8분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] val 8658/14435: loss 1.2495, BA 0.5302 (train loss 1.409) | 168.5분
+
+[deb-stage1] 8928/14435 loss 1.423 | 173.4분 | 건너뜀 0, fp16 overflow 5, scale 16384
+
+[deb-stage1] val 9139/14435: loss 1.3270, BA 0.4987 (train loss 1.392) | 177.7분
+
+[deb-stage1] 9216/14435 loss 1.360 | 179.1분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] 체크포인트 저장: 9455/14435 스텝 | 184.0분
+
+[deb-stage1] 9504/14435 loss 1.377 | 184.9분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] val 9620/14435: loss 1.1856, BA 0.5508 (train loss 1.399) | 187.7분
+
+[deb-stage1] 9792/14435 loss 1.384 | 190.8분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] 10080/14435 loss 1.377 | 196.0분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] val 10101/14435: loss 1.2185, BA 0.5413 (train loss 1.356) | 196.8분
+
+[deb-stage1] 10368/14435 loss 1.272 | 201.7분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] val 10582/14435: loss 1.2205, BA 0.5324 (train loss 1.323) | 206.0분
+
+[deb-stage1] 10656/14435 loss 1.361 | 207.4분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] 10944/14435 loss 1.339 | 212.6분 | 건너뜀 0, fp16 overflow 5, scale 32768
+
+[deb-stage1] 체크포인트 저장: 11022/14435 스텝 | 214.7분
+
+[deb-stage1] val 11063/14435: loss 1.1914, BA 0.5439 (train loss 1.395) | 215.9분
+
+[deb-stage1] 11232/14435 loss 1.311 | 219.1분 | 건너뜀 0, fp16 overflow 6, scale 32768
+
+[deb-stage1] 11520/14435 loss 1.291 | 224.4분 | 건너뜀 0, fp16 overflow 6, scale 32768
+
+[deb-stage1] val 11544/14435: loss 1.2262, BA 0.5287 (train loss 1.271) | 225.3분
+
+[deb-stage1] 11808/14435 loss 1.274 | 229.9분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] val 12025/14435: loss 1.1684, BA 0.5569 (train loss 1.331) | 234.3분
+
+[deb-stage1] 12096/14435 loss 1.297 | 235.6분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] 12384/14435 loss 1.280 | 240.6분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] val 12506/14435: loss 1.1888, BA 0.5524 (train loss 1.367) | 243.2분
+
+[deb-stage1] 체크포인트 저장: 12588/14435 스텝 | 245.3분
+
+[deb-stage1] 12672/14435 loss 1.264 | 246.9분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] 12960/14435 loss 1.304 | 252.4분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] val 12987/14435: loss 1.1799, BA 0.5524 (train loss 1.301) | 253.4분
+
+[deb-stage1] 13248/14435 loss 1.259 | 258.1분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] val 13468/14435: loss 1.1735, BA 0.5594 (train loss 1.328) | 262.6분
+
+[deb-stage1] 13536/14435 loss 1.295 | 263.8분 | 건너뜀 0, fp16 overflow 7, scale 16384
+
+[deb-stage1] 13824/14435 loss 1.280 | 269.1분 | 건너뜀 0, fp16 overflow 7, scale 32768
+
+[deb-stage1] val 13949/14435: loss 1.1701, BA 0.5580 (train loss 1.290) | 271.7분
+
+[deb-stage1] 14112/14435 loss 1.282 | 274.7분 | 건너뜀 0, fp16 overflow 7, scale 32768
+
+[deb-stage1] 체크포인트 저장: 14149/14435 스텝 | 276.0분
+

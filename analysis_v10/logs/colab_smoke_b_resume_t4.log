@@ -1,0 +1,193 @@
+Input Notebook:  v10_smoke_b.ipynb
+Output Notebook: /content/out/v10_smoke_b_executed.ipynb
+/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  _validate(nbdict, ref, version, version_minor, relax_add_props)
+Executing notebook with kernel: python3
+Executing Cell 1---------------------------------------
+/usr/local/lib/python3.13/dist-packages/huggingface_hub/utils/_auth.py:138: UserWarning: 
+Error while fetching `HF_TOKEN` secret value from your vault: 'Requesting secret HF_TOKEN timed out. Secrets can only be fetched when running from the Colab UI.'.
+  warnings.warn(f"\nError while fetching `HF_TOKEN` secret value from your vault: '{str(e)}'.")
+
+Downloading bytes:           |  0.00B            
+Reconstructing (incomplete total...): |          |  0.00B /  0.00B            
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+Open Pool: 115MB, md5 10d1c13b5a9f9a8c3c2cf64a1d4508b8 (고정판)
+v10: DeBERTa Stage 1을 Open Pool 전체로 처음부터 학습합니다(Colab 세션은 8시간에서 끊기므로 이어 하기가 필요할 수 있음).
+
+Ending Cell 1------------------------------------------
+Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+train (2699, 4), 프롬프트 150개, test (3, 2)
+Open Pool: 231,036개 지문
+프롬프트당 지문 수: {18: 149, 17: 1}
+단어 수 분포: {'min': 36.0, '50%': 101.0, 'max': 274.0}
+
+Ending Cell 3------------------------------------------
+Executing Cell 4---------------------------------------
+StratifiedGroupKFold가 Kaggle 커널 분할과 같은가: True | scikit-learn 1.6.1
+
+프롬프트 그룹 KFold BA: 0.3145
+
+일반 KFold BA        : 0.1530
+무작위 추측 BA       : 0.0556
+
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+device=cuda:0, base=None, LoRA 실행=False
+LoRA를 건너뜁니다. GPU와 Qwen3 입력을 확인하세요. n-gram만으로 제출 파일을 만듭니다.
+
+Ending Cell 7------------------------------------------
+Executing Cell 8---------------------------------------
+Ending Cell 8------------------------------------------
+Executing Cell 9---------------------------------------
+DeBERTa 폴더=/content/models/deberta-v3-large, 실행=True
+
+GPU: Tesla T4 | capability (7, 5) | torch 2.14.1+cu130 | transformers 5.22.1 | deb_amp auto | grad ckpt True
+
+/usr/local/lib/python3.13/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]
+DeBERTa: /content/models/deberta-v3-large | 파라미터 434,030,610개 (전부 학습) | 연산 정밀도 torch.float16 | 풀링 mean
+DeBERTa Stage 1: 출처의 프롬프트 id가 train prompt_id와 같은 풀 행 0개를 뺍니다.
+DeBERTa Stage 1 행 가중치(라벨 균형): 최소 1.000 / 최대 1.000 / 평균 1.000
+DeBERTa Stage 1 데이터 (sample): 720행 | 라벨별 최소 40 / 최대 40
+
+[deb-stage1] 체크포인트에서 이어 하기: 9/45 스텝 (epoch 0, 마이크로 배치 18부터), loss 3.080
+
+[deb-stage1] 10/45 loss 3.077 | 0.1분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 11/45 loss 3.072 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 12/45 loss 3.070 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 13/45 loss 3.062 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 14/45 loss 3.057 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 15/45 loss 3.052 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 16/45 loss 3.047 | 0.2분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 17/45 loss 3.037 | 0.3분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 18/45 loss 3.025 | 0.3분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] val 18/45: loss 2.8685, BA 0.0856 (train loss 3.025) | 0.8분
+
+[deb-stage1] 체크포인트 저장: 18/45 스텝 | 1.7분
+
+[deb-stage1] 19/45 loss 3.019 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 20/45 loss 3.016 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 21/45 loss 3.011 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 22/45 loss 3.012 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 23/45 loss 3.004 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 24/45 loss 3.002 | 1.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 25/45 loss 2.998 | 1.9분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 26/45 loss 2.993 | 1.9분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 27/45 loss 2.996 | 1.9분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] val 27/45: loss 2.8356, BA 0.0982 (train loss 2.996) | 2.4분
+
+[deb-stage1] 체크포인트 저장: 27/45 스텝 | 3.6분
+
+[deb-stage1] 28/45 loss 2.988 | 3.6분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 29/45 loss 2.980 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 30/45 loss 2.983 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 31/45 loss 2.975 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 32/45 loss 2.970 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 33/45 loss 2.963 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 34/45 loss 2.958 | 3.7분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 35/45 loss 2.957 | 3.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 36/45 loss 2.951 | 3.8분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] val 36/45: loss 2.7965, BA 0.1001 (train loss 2.951) | 4.3분
+
+[deb-stage1] 체크포인트 저장: 36/45 스텝 | 5.3분
+
+[deb-stage1] 37/45 loss 2.940 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 38/45 loss 2.937 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 39/45 loss 2.935 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 40/45 loss 2.937 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 41/45 loss 2.934 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 42/45 loss 2.937 | 5.4분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 43/45 loss 2.941 | 5.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 44/45 loss 2.939 | 5.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] 45/45 loss 2.936 | 5.5분 | 건너뜀 0, fp16 overflow 0, scale 65536
+
+[deb-stage1] val 45/45: loss 2.7882, BA 0.1041 (train loss 2.936) | 6.0분
+
+[deb-stage1] 완료: 45스텝, 비정상 손실로 건너뜀 0회, fp16 overflow로 건너뛴 갱신 0회, 6.0분
+
+DeBERTa Stage 1 GPU 메모리 최대 사용량: 8.1GB
+
+DeBERTa Stage 1 fold 0 BA: 0.1111 | 7.1분
+
+[deb-stage2-fold0] val 0/270: loss 2.7872, BA 0.1111 (train loss 0.000) | 0.1분
+
+[deb-stage2-fold0] 시간 예산 도달, 9/270 스텝에서 중단
+
+fold 0: DeBERTa BA 0.1315 | 7.5분
+
+[deb-stage2-fold1] val 0/270: loss 2.7818, BA 0.1037 (train loss 0.000) | 0.1분
+
+[deb-stage2-fold1] 시간 예산 도달, 8/270 스텝에서 중단
+
+fold 1: DeBERTa BA 0.1167 | 7.9분
+
+[deb-stage2-fold2] val 0/270: loss 2.7931, BA 0.1000 (train loss 0.000) | 0.1분
+
+[deb-stage2-fold2] 시간 예산 도달, 8/270 스텝에서 중단
+
+fold 2: DeBERTa BA 0.1259 | 8.3분
+
+[deb-stage2-fold3] val 0/270: loss 2.7907, BA 0.1001 (train loss 0.000) | 0.1분
+
+[deb-stage2-fold3] 시간 예산 도달, 9/270 스텝에서 중단
+
+fold 3: DeBERTa BA 0.0970 | 8.6분
+
+[deb-stage2-fold4] val 0/270: loss 2.7885, BA 0.1056 (train loss 0.000) | 0.1분
+
+[deb-stage2-fold4] 시간 예산 도달, 8/270 스텝에서 중단
+
+fold 4: DeBERTa BA 0.0981 | 9.0분
+
+[deb-stage2-full] 시간 예산 도달, 13/338 스텝에서 중단
+
+테스트 로짓: train 전체로 학습한 모델 1개
+DeBERTa OOF BA: 0.1138 (fold 0: 0.1315) | 9.5분
+DeBERTa 구간 GPU 메모리 최대 사용량: 8.1GB
+
+== DEB RUN DONE == 9.5분
+
+Ending Cell 9------------------------------------------

@@ -1,0 +1,24 @@
+Tesla T4 2.14.1+cu130 5.22.1
+풀 231,036행 토큰화 100초 | 길이 평균 141.0, 중앙 127, p99 309, 최대 512, 512에서 잘림 0.0000 | train 평균 140.9, 최대 351
+마이크로 배치 28,880개 (bs 8), 폭 평균 143.8, 패딩 비율 0.019
+측정 배치 60개 폭 평균 145.8 (전체 143.8)
+/usr/local/lib/python3.13/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]Loading weights: 100%|██████████| 390/390 [00:00<00:00, 26447.94it/s]
+[W1126 04:18:27.089826529 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 526385152 bytes (free: 490536960, total: 15637086208).
+fp16 autocast, grad ckpt 끔: 0.398s/마이크로 배치 (폭 평균 146), 최대 메모리 13.35GB, 비정상 손실 0, scaler 65536.0
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]Loading weights: 100%|██████████| 390/390 [00:00<00:00, 18101.50it/s]
+[W1126 04:18:52.301334349 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 134217728 bytes (free: 14483456, total: 15637086208).
+[W1126 04:18:52.611568845 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 134217728 bytes (free: 83689472, total: 15637086208).
+[W1126 04:18:52.611681524 CUDACachingAllocator.cpp:3934] memory allocation failed with OOM on device 0 while trying to allocate 134217728 bytes (free: 83689472, total: 15637086208).
+fp16, grad ckpt 끔, 폭 512 (최악): OOM (최대 14.36GB)
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]Loading weights: 100%|██████████| 390/390 [00:00<00:00, 26456.92it/s]
+fp16 autocast, grad ckpt 켬: 0.508s/마이크로 배치 (폭 평균 146), 최대 메모리 8.14GB, 비정상 손실 0, scaler 65536.0
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]Loading weights: 100%|██████████| 390/390 [00:00<00:00, 20515.70it/s]
+fp32, grad ckpt 켬 (v7 설정): 1.265s/마이크로 배치 (폭 평균 145), 최대 메모리 8.13GB, 비정상 손실 0, scaler -
+추정 Stage 1 (fp16): 28,880 x 0.398s = 3.19시간 (배치 폭 보정 전)
+추정 Stage 1 (fp16_ckpt): 28,880 x 0.508s = 4.07시간 (배치 폭 보정 전)
+추정 Stage 1 (fp32_ckpt): 28,880 x 1.265s = 10.14시간 (배치 폭 보정 전)
+Loading weights:   0%|          | 0/390 [00:00<?, ?it/s]Loading weights: 100%|██████████| 390/390 [00:00<00:00, 14520.51it/s]
+train 2,699개 추론 (fp16, bs 32): 29.6초
+== SPEEDTEST DONE ==
